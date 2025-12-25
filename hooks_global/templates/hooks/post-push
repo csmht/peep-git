@@ -1,0 +1,13 @@
+#!/bin/bash
+# Git post-push hook - GitSee
+
+REPO_PATH="$(git rev-parse --show-toplevel)"
+BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
+REMOTE="${1:-origin}"
+
+python "C:\Users\Liang\Desktop\Work\gitSee/hooks_global/scripts/capture_push.py" \
+  --repo "$REPO_PATH" \
+  --branch "$BRANCH_NAME" \
+  --remote "$REMOTE"
+
+exit 0

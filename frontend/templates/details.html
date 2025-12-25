@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}详细记录 - GitSee{% endblock %}
+
+{% block content %}
+<div class="details-page">
+    <h2>详细活动记录</h2>
+
+    <div class="filter-bar">
+        <select id="activity-type-filter" class="form-control">
+            <option value="">全部类型</option>
+            <option value="commit">提交</option>
+            <option value="push">推送</option>
+        </select>
+
+        <input type="text" id="repo-search" class="form-control" placeholder="搜索仓库...">
+
+        <button id="export-btn" class="btn btn-secondary">导出数据</button>
+    </div>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>时间</th>
+                    <th>类型</th>
+                    <th>仓库</th>
+                    <th>分支</th>
+                    <th>提交哈希</th>
+                    <th>消息</th>
+                    <th>作者</th>
+                </tr>
+            </thead>
+            <tbody id="details-table-body">
+                <tr>
+                    <td colspan="7" class="loading">加载中...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <button id="prev-page" class="btn btn-secondary" disabled>上一页</button>
+        <span id="page-info">第 1 页</span>
+        <button id="next-page" class="btn btn-secondary">下一页</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentPage = 1;
+const pageSize = 20;
+
+// 加载详细记录
+async function loadDetails() {
+    const activityType = document.getElementById('activity-type-filter').value;
+    const repoSearch = document.getElementById('repo-search').value;
+
+    const params = new URLSearchParams({
+        page: currentPage,
+        page_size: pageSize
+    });
+
+    if (activityType) params.append('activity_type', activityType);
+    if (repoSearch) params.append('repo_path', repoSearch);
+
+    try {
+        const response = await fetch(`/api/v1/activities?${params}`);
+        const result = await response.json();
+
+        if (result.success) {
+            renderDetailsTable(result.data.activities);
+            updatePagination(result.data.total);
+        }
+    } catch (error) {
+        console.error('加载详细记录失败:', error);
+    }
+}
+
+// 渲染表格
+function renderDetailsTable(activities) {
+    const tbody = document.getElementById('details-table-body');
+
+    if (activities.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="no-data">暂无数据</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = activities.map(activity => `
+        <tr>
+            <td>${formatDateTime(activity.timestamp)}</td>
+            <td><span class="badge badge-${activity.activity_type}">${activity.activity_type === 'commit' ? '提交' : '推送'}</span></td>
+            <td title="${activity.repo_path}">${getRepoName(activity.repo_path)}</td>
+            <td>${activity.branch_name}</td>
+            <td><code>${activity.commit_hash.substring(0, 7)}</code></td>
+            <td title="${activity.commit_message}">${truncate(activity.commit_message, 50)}</td>
+            <td>${activity.author_name || '-'}</td>
+        </tr>
+    `).join('');
+}
+
+// 更新分页
+function updatePagination(total) {
+    const totalPages = Math.ceil(total / pageSize);
+    document.getElementById('page-info').textContent = `第 ${currentPage} / ${totalPages} 页`;
+    document.getElementById('prev-page').disabled = currentPage <= 1;
+    document.getElementById('next-page').disabled = currentPage >= totalPages;
+}
+
+// 格式化日期时间
+function formatDateTime(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString('zh-CN');
+}
+
+// 获取仓库名称
+function getRepoName(path) {
+    return path.split('/').pop();
+}
+
+// 截断文本
+function truncate(text, length) {
+    if (!text) return '-';
+    return text.length > length ? text.substring(0, length) + '...' : text;
+}
+
+// 事件监听
+document.getElementById('prev-page').addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        loadDetails();
+    }
+});
+
+document.getElementById('next-page').addEventListener('click', () => {
+    currentPage++;
+    loadDetails();
+});
+
+document.getElementById('activity-type-filter').addEventListener('change', () => {
+    currentPage = 1;
+    loadDetails();
+});
+
+document.getElementById('repo-search').addEventListener('input', debounce(() => {
+    currentPage = 1;
+    loadDetails();
+}, 500));
+
+document.getElementById('export-btn').addEventListener('click', async () => {
+    const activityType = document.getElementById('activity-type-filter').value;
+    const params = new URLSearchParams({ format: 'csv' });
+    if (activityType) params.append('activity_type', activityType);
+
+    window.location.href = `/api/v1/export?${params}`;
+});
+
+// 防抖函数
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// 初始加载
+loadDetails();
+</script>
+{% endblock %}

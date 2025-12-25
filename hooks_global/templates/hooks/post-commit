@@ -1,0 +1,18 @@
+#!/bin/bash
+# Git post-commit hook - GitSee
+
+REPO_PATH="$(git rev-parse --show-toplevel)"
+BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
+COMMIT_HASH="$(git rev-parse HEAD)"
+COMMIT_MESSAGE="$(git log -1 --pretty=%B)"
+AUTHOR_INFO="$(git log -1 --pretty='%an|%ae')"
+
+# 调用 Python 捕获脚本
+python "C:\Users\Liang\Desktop\Work\gitSee/hooks_global/scripts/capture_commit.py" \
+  --repo "$REPO_PATH" \
+  --branch "$BRANCH_NAME" \
+  --hash "$COMMIT_HASH" \
+  --message "$COMMIT_MESSAGE" \
+  --author "$AUTHOR_INFO"
+
+exit 0

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GitSee - Git 活动监视器{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>GitSee</h1>
+            <p class="subtitle">Git 活动监视器</p>
+        </header>
+
+        <nav class="nav">
+            <a href="{{ url_for('web.index') }}" class="nav-link">仪表盘</a>
+            <a href="{{ url_for('web.details') }}" class="nav-link">详细记录</a>
+            <a href="{{ url_for('web.repositories') }}" class="nav-link">仓库管理</a>
+        </nav>
+
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 GitSee - 本地 Git 活动监视工具</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='lib/chart.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

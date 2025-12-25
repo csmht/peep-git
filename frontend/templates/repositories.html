@@ -1,0 +1,613 @@
+{% extends "base.html" %}
+
+{% block title %}仓库管理 - GitSee{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<style>
+.repo-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-scan {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.btn-scan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.scan-options {
+    display: none;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.scan-options.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.repo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.repo-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.repo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.repo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.repo-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.repo-path {
+    font-size: 12px;
+    color: #999;
+    word-break: break-all;
+}
+
+.repo-status {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.repo-status.monitored {
+    background: #d4edda;
+    color: #155724;
+}
+
+.repo-status.unmonitored {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.repo-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.stat-item {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.repo-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-small:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+.add-repo-form {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.add-repo-form h3 {
+    margin-bottom: 15px;
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
+.spinner {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="repositories-page">
+    <h2>仓库管理</h2>
+    <p>管理和监控您的 Git 仓库</p>
+
+    <!-- 扫描按钮 -->
+    <button id="scan-btn" class="btn-scan">
+        <span>🔍 扫描 Git 仓库</span>
+    </button>
+
+    <!-- 扫描选项 -->
+    <div id="scan-options" class="scan-options">
+        <h3>扫描选项</h3>
+        <div class="form-group">
+            <label>扫描目录</label>
+            <input type="text" id="scan-directories" placeholder="多个目录用分号分隔,留空则扫描常见目录">
+        </div>
+        <div class="form-group">
+            <label>扫描深度</label>
+            <input type="number" id="scan-depth" value="4" min="1" max="10">
+        </div>
+        <button id="start-scan-btn" class="btn btn-primary">开始扫描</button>
+        <button id="cancel-scan-btn" class="btn btn-secondary">取消</button>
+    </div>
+
+    <!-- 添加仓库表单 -->
+    <div class="add-repo-form">
+        <h3>手动添加仓库</h3>
+        <div class="form-row">
+            <div style="flex: 1;">
+                <input type="text" id="add-repo-path" placeholder="输入 Git 仓库路径">
+            </div>
+            <button id="add-repo-btn" class="btn btn-primary">添加</button>
+        </div>
+        <small style="color: #666;">例如: C:\Users\YourName\projects\my-repo</small>
+    </div>
+
+    <!-- 仓库列表 -->
+    <h3 style="margin-top: 30px;">已监控仓库 (<span id="repo-count">0</span>)</h3>
+    <div id="repo-list" class="repo-grid">
+        <div class="loading">加载中...</div>
+    </div>
+</div>
+
+<!-- 加载遮罩 -->
+<div id="loading-overlay" class="loading-overlay">
+    <div class="spinner">
+        <div style="font-size: 40px; margin-bottom: 15px;">⏳</div>
+        <p id="loading-text">正在处理...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let repos = [];
+
+// 加载仓库列表
+async function loadRepos() {
+    try {
+        showLoading('加载仓库列表...');
+        const response = await fetch('/api/v1/repos/list');
+        const result = await response.json();
+
+        if (result.success) {
+            repos = result.data.repos;
+            renderRepos();
+        } else {
+            console.error('加载失败:', result.error);
+        }
+    } catch (error) {
+        console.error('加载失败:', error);
+    } finally {
+        hideLoading();
+    }
+}
+
+// 渲染仓库列表
+function renderRepos() {
+    const container = document.getElementById('repo-list');
+    document.getElementById('repo-count').textContent = repos.length;
+
+    if (repos.length === 0) {
+        container.innerHTML = '<div class="no-data">暂无监控仓库,请扫描或手动添加</div>';
+        return;
+    }
+
+    container.innerHTML = repos.map(repo => `
+        <div class="repo-card">
+            <div class="repo-header">
+                <div>
+                    <div class="repo-name">${repo.repo_name}</div>
+                    <div class="repo-path" title="${repo.repo_path}">${repo.repo_path}</div>
+                </div>
+                <span class="repo-status ${repo.is_monitored ? 'monitored' : 'unmonitored'}">
+                    ${repo.is_monitored ? '✓ 已监控' : '✗ 未监控'}
+                </span>
+            </div>
+
+            <div class="repo-stats">
+                <div class="stat-item">
+                    <div class="stat-value">${repo.total_commits || 0}</div>
+                    <div class="stat-label">提交数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${repo.total_pushes || 0}</div>
+                    <div class="stat-label">推送数</div>
+                </div>
+            </div>
+
+            ${repo.last_activity_time ? `
+                <div style="font-size: 12px; color: #999; margin: 10px 0;">
+                    最后活动: ${formatDateTime(repo.last_activity_time)}
+                </div>
+            ` : ''}
+
+            ${repo.current_branch ? `
+                <div style="font-size: 13px; color: #666; margin: 5px 0;">
+                    <strong>分支:</strong> ${repo.current_branch}
+                </div>
+            ` : ''}
+
+            ${repo.remote_url ? `
+                <div style="font-size: 12px; color: #999; margin: 5px 0;">
+                    <strong>远程:</strong> ${repo.remote_url}
+                </div>
+            ` : ''}
+
+            <div class="repo-actions">
+                ${repo.is_monitored
+                    ? `<button class="btn-small btn-danger" onclick="uninstallHook('${encodeURIComponent(repo.repo_path)}')">卸载 Hook</button>`
+                    : `<button class="btn-small btn-success" onclick="installHook('${encodeURIComponent(repo.repo_path)}')">安装 Hook</button>`
+                }
+                <button class="btn-small btn-secondary" onclick="deleteRepo('${encodeURIComponent(repo.repo_path)}')">删除</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// 扫描仓库
+async function scanRepos() {
+    const directories = document.getElementById('scan-directories').value;
+    const depth = parseInt(document.getElementById('scan-depth').value);
+
+    const requestData = {};
+
+    if (directories) {
+        requestData.directories = directories.split(';').map(d => d.trim());
+    }
+
+    requestData.max_depth = depth;
+
+    try {
+        showLoading('正在扫描 Git 仓库...');
+        const response = await fetch('/api/v1/repos/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            const { count, repos: foundRepos } = result.data;
+
+            if (count === 0) {
+                alert('未找到 Git 仓库');
+            } else {
+                // 显示找到的仓库
+                const message = `找到 ${count} 个 Git 仓库\n\n是否全部添加到监控列表?`;
+                if (confirm(message)) {
+                    await batchAddRepos(foundRepos.map(r => r.path));
+                } else {
+                    // 让用户选择
+                    const selectedRepos = foundRepos.filter(r =>
+                        confirm(`添加仓库 "${r.name}"?\n路径: ${r.path}`)
+                    );
+                    await batchAddRepos(selectedRepos.map(r => r.path));
+                }
+            }
+        } else {
+            alert('扫描失败: ' + result.error);
+        }
+    } catch (error) {
+        console.error('扫描失败:', error);
+        alert('扫描失败: ' + error.message);
+    } finally {
+        hideLoading();
+    }
+}
+
+// 批量添加仓库
+async function batchAddRepos(repoPaths) {
+    if (repoPaths.length === 0) return;
+
+    try {
+        showLoading(`正在添加 ${repoPaths.length} 个仓库...`);
+        const response = await fetch('/api/v1/repos/batch-add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                repo_paths: repoPaths,
+                install_hooks: true
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            const { total, successful, failed } = result.data;
+            alert(`添加完成!\n总计: ${total}\n成功: ${successful}\n失败: ${failed}`);
+            await loadRepos();
+        } else {
+            alert('添加失败: ' + result.error);
+        }
+    } catch (error) {
+        console.error('添加失败:', error);
+        alert('添加失败: ' + error.message);
+    } finally {
+        hideLoading();
+    }
+}
+
+// 手动添加仓库
+async function addRepo() {
+    const repoPath = document.getElementById('add-repo-path').value.trim();
+
+    if (!repoPath) {
+        alert('请输入仓库路径');
+        return;
+    }
+
+    try {
+        showLoading('正在添加仓库...');
+        const response = await fetch('/api/v1/repos/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                repo_path: repoPath,
+                install_hook: true
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('仓库添加成功!');
+            document.getElementById('add-repo-path').value = '';
+            await loadRepos();
+        } else {
+            alert('添加失败: ' + result.error);
+        }
+    } catch (error) {
+        console.error('添加失败:', error);
+        alert('添加失败: ' + error.message);
+    } finally {
+        hideLoading();
+    }
+}
+
+// 安装 Hook
+async function installHook(repoPath) {
+    repoPath = decodeURIComponent(repoPath);
+
+    if (!confirm(`确定要为以下仓库安装 Hook 吗?\n${repoPath}`)) {
+        return;
+    }
+
+    try {
+        showLoading('正在安装 Hook...');
+        const response = await fetch(`/api/v1/repos/${encodeURIComponent(repoPath)}/install-hook`, {
+            method: 'POST'
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('Hook 安装成功!');
+            await loadRepos();
+        } else {
+            alert('Hook 安装失败: ' + result.error);
+        }
+    } catch (error) {
+        console.error('Hook 安装失败:', error);
+        alert('Hook 安装失败: ' + error.message);
+    } finally {
+        hideLoading();
+    }
+}
+
+// 卸载 Hook
+async function uninstallHook(repoPath) {
+    repoPath = decodeURIComponent(repoPath);
+
+    if (!confirm(`确定要为以下仓库卸载 Hook 吗?\n${repoPath}`)) {
+        return;
+    }
+
+    try {
+        showLoading('正在卸载 Hook...');
+        const response = await fetch(`/api/v1/repos/${encodeURIComponent(repoPath)}/uninstall-hook`, {
+            method: 'POST'
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('Hook 卸载成功!');
+            await loadRepos();
+        } else {
+            alert('Hook 卸载失败: ' + result.error);
+        }
+    } catch (error) {
+        console.error('Hook 卸载失败:', error);
+        alert('Hook 卸载失败: ' + error.message);
+    } finally {
+        hideLoading();
+    }
+}
+
+// 删除仓库
+async function deleteRepo(repoPath) {
+    repoPath = decodeURIComponent(repoPath);
+
+    if (!confirm(`确定要删除以下仓库吗?\n${repoPath}\n\n这将不会删除实际仓库文件,只是从监控列表中移除。`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/v1/repos/${encodeURIComponent(repoPath)}`, {
+            method: 'DELETE'
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('仓库已删除!');
+            await loadRepos();
+        } else {
+            alert('删除失败: ' + result.error);
+        }
+    } catch (error) {
+        console.error('删除失败:', error);
+        alert('删除失败: ' + error.message);
+    }
+}
+
+// 显示加载遮罩
+function showLoading(text) {
+    document.getElementById('loading-text').textContent = text;
+    document.getElementById('loading-overlay').classList.add('active');
+}
+
+// 隐藏加载遮罩
+function hideLoading() {
+    document.getElementById('loading-overlay').classList.remove('active');
+}
+
+// 格式化日期时间
+function formatDateTime(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString('zh-CN');
+}
+
+// 事件监听
+document.getElementById('scan-btn').addEventListener('click', () => {
+    document.getElementById('scan-options').classList.toggle('active');
+});
+
+document.getElementById('cancel-scan-btn').addEventListener('click', () => {
+    document.getElementById('scan-options').classList.remove('active');
+});
+
+document.getElementById('start-scan-btn').addEventListener('click', scanRepos);
+
+document.getElementById('add-repo-btn').addEventListener('click', addRepo);
+
+document.getElementById('add-repo-path').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        addRepo();
+    }
+});
+
+// 页面加载时初始化
+document.addEventListener('DOMContentLoaded', () => {
+    loadRepos();
+});
+</script>
+{% endblock %}

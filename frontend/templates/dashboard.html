@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}仪表盘 - GitSee{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="toolbar">
+    <div class="toolbar-group">
+        <label for="date-range">日期范围:</label>
+        <select id="date-range" class="form-control">
+            <option value="7">最近 7 天</option>
+            <option value="14">最近 14 天</option>
+            <option value="30" selected>最近 30 天</option>
+            <option value="90">最近 90 天</option>
+        </select>
+    </div>
+
+    <div class="toolbar-group">
+        <label for="repo-filter">仓库:</label>
+        <select id="repo-filter" class="form-control">
+            <option value="">全部仓库</option>
+        </select>
+    </div>
+
+    <button id="refresh-btn" class="btn btn-primary">刷新数据</button>
+</div>
+
+<div class="dashboard">
+    <!-- 统计卡片 -->
+    <div class="stats-cards">
+        <div class="stat-card">
+            <div class="stat-value" id="total-commits">-</div>
+            <div class="stat-label">总提交数</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="total-pushes">-</div>
+            <div class="stat-label">总推送数</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="active-repos">-</div>
+            <div class="stat-label">活跃仓库</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="avg-commits">-</div>
+            <div class="stat-label">日均提交</div>
+        </div>
+    </div>
+
+    <!-- 图表区域 -->
+    <div class="charts-container">
+        <div class="chart-card">
+            <h3>提交趋势</h3>
+            <canvas id="trend-chart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h3>仓库分布</h3>
+            <canvas id="repo-chart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h3>分支活跃度</h3>
+            <canvas id="branch-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- 最近活动 -->
+    <div class="recent-activities">
+        <h3>最近活动</h3>
+        <div id="activities-list" class="activities-list">
+            <div class="loading">加载中...</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
