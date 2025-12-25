@@ -414,11 +414,7 @@ git config --global --unset init.templatedir
 rm -rf gitSee
 ```
 
-## 许可证
 
-MIT License
-
-## 贡献
 
 欢迎提交 Issue 和 Pull Request!
 
