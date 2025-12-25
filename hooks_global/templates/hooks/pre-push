@@ -1,0 +1,17 @@
+#!/bin/bash
+# Git pre-push hook - GitSee
+# 在推送之前捕获推送事件
+
+REPO_PATH="$(git rev-parse --show-toplevel)"
+BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
+
+# 获取远程仓库地址
+REMOTE_URL=$(git config --get remote.origin.url)
+
+# 调用 Python 捕获脚本
+python "C:\Users\Liang\Desktop\Work\gitSee/hooks_global/scripts/capture_push.py" \
+  --repo "$REPO_PATH" \
+  --branch "$BRANCH_NAME" \
+  --remote "$REMOTE_URL"
+
+exit 0  # 返回 0 允许推送继续

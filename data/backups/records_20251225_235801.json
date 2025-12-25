@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "last_updated": "2025-12-25T23:58:01.206440",
+  "activities": [
+    {
+      "id": 2,
+      "activity_type": "commit",
+      "timestamp": "2025-12-25T23:54:18.120876",
+      "repo_path": "C:/Users/Liang/Desktop/signLab1",
+      "branch_name": "issues-IDFVSP",
+      "commit_hash": "563f492a6d92db8823bd5448eef02fb8b3ad78f3",
+      "commit_message": "修改BUG",
+      "author_name": "csmht",
+      "author_email": "3299524971@qq.com",
+      "files_changed": 1,
+      "insertions": 1,
+      "deletions": 0,
+      "created_at": "2025-12-25 15:54:18"
+    },
+    {
+      "id": 1,
+      "activity_type": "commit",
+      "timestamp": "2025-12-25T23:48:37.348282",
+      "repo_path": "C:/Users/Liang/Desktop/Work/gitSee",
+      "branch_name": "master",
+      "commit_hash": "a9ce99a1b12f03e759cf0e5e6f0a874d8e3a6531",
+      "commit_message": "Initial commit: GitSee - Git Activity Monitoring Tool\n\nFeatures:\n- Auto-scan and manage Git repositories\n- Monitor commit and push activities via Git hooks\n- Web dashboard with statistics and visualization\n- Dual storage: SQLite + JSON\n- Repository management interface\n- Automatic browser opening on startup\n\nTech Stack:\n- Backend: Python 3.7+ + Flask\n- Frontend: HTML + CSS + JavaScript + Chart.js\n- Database: SQLite\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>",
+      "author_name": "csmht",
+      "author_email": "3299524971@qq.com",
+      "files_changed": 0,
+      "insertions": 0,
+      "deletions": 0,
+      "created_at": "2025-12-25 15:48:37"
+    }
+  ],
+  "statistics": {
+    "total_commits": 2,
+    "total_pushes": 0,
+    "most_active_repo": "C:/Users/Liang/Desktop/signLab1",
+    "most_active_branch": "issues-IDFVSP"
+  }
+}

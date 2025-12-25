@@ -44,7 +44,9 @@ class HookInstaller:
 
         # 检查是否已安装
         post_commit_hook = hooks_dir / 'post-commit'
-        if self.is_gitsee_hook_installed(post_commit_hook):
+        pre_push_hook = hooks_dir / 'pre-push'
+
+        if self.is_gitsee_hook_installed(post_commit_hook) and self.is_gitsee_hook_installed(pre_push_hook):
             return {
                 'success': True,
                 'message': 'Hook 已安装',
@@ -52,17 +54,25 @@ class HookInstaller:
                 'already_installed': True
             }
 
-        # 生成 hook 脚本内容
-        hook_content = self.generate_hook_script(repo)
-
-        # 写入 hook 脚本
+        # 生成并安装 hooks
         try:
+            # 安装 post-commit hook
+            post_commit_content = self.generate_post_commit_hook(repo)
             with open(post_commit_hook, 'w', encoding='utf-8') as f:
-                f.write(hook_content)
+                f.write(post_commit_content)
 
-            # 设置可执行权限(Linux/Mac)
             try:
                 os.chmod(post_commit_hook, 0o755)
+            except:
+                pass  # Windows 忽略
+
+            # 安装 pre-push hook
+            pre_push_content = self.generate_pre_push_hook(repo)
+            with open(pre_push_hook, 'w', encoding='utf-8') as f:
+                f.write(pre_push_content)
+
+            try:
+                os.chmod(pre_push_hook, 0o755)
             except:
                 pass  # Windows 忽略
 
@@ -70,7 +80,7 @@ class HookInstaller:
                 'success': True,
                 'message': 'Hook 安装成功',
                 'repo_path': repo_path,
-                'hook_file': str(post_commit_hook)
+                'hooks': ['post-commit', 'pre-push']
             }
 
         except Exception as e:
@@ -80,9 +90,9 @@ class HookInstaller:
                 'repo_path': repo_path
             }
 
-    def generate_hook_script(self, repo_path: Path) -> str:
+    def generate_post_commit_hook(self, repo_path: Path) -> str:
         """
-        生成 hook 脚本内容
+        生成 post-commit hook 脚本内容
 
         Args:
             repo_path: 仓库路径
@@ -111,6 +121,40 @@ python "{gitsee_root_str}/hooks_global/scripts/capture_commit.py" \\
   --author "$AUTHOR_INFO"
 
 exit 0
+'''
+
+        return hook_script
+
+    def generate_pre_push_hook(self, repo_path: Path) -> str:
+        """
+        生成 pre-push hook 脚本内容
+
+        Args:
+            repo_path: 仓库路径
+
+        Returns:
+            hook 脚本内容
+        """
+        gitsee_root_str = str(self.gitsee_root).replace('\\', '/')
+
+        hook_script = f'''#!/bin/bash
+# GitSee pre-push hook
+# 在推送之前捕获推送事件
+# 自动生成,请勿手动修改
+
+REPO_PATH="$(git rev-parse --show-toplevel)"
+BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
+
+# 获取远程仓库地址
+REMOTE_URL=$(git config --get remote.origin.url)
+
+# 调用 GitSee 捕获脚本
+python "{gitsee_root_str}/hooks_global/scripts/capture_push.py" \\
+  --repo "$REPO_PATH" \\
+  --branch "$BRANCH_NAME" \\
+  --remote "$REMOTE_URL"
+
+exit 0  # 返回 0 允许推送继续
 '''
 
         return hook_script
