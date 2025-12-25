@@ -7,6 +7,8 @@
 - ✅ **自动扫描**: 一键扫描系统中所有 Git 仓库,自动安装监控 hook
 - ✅ **仓库管理**: Web 界面管理所有监控仓库,支持批量操作
 - ✅ **全局监视**: 通过 Git hook 自动捕获所有仓库的 commit 和 push 操作
+  - **post-commit** hook - 在提交后捕获提交事件
+  - **pre-push** hook - 在推送前捕获推送事件
 - ✅ **数据可视化**: 使用图表展示提交趋势、仓库分布、分支活跃度
 - ✅ **详细记录**: 记录每次操作的详细信息(时间、仓库、分支、消息、作者等)
 - ✅ **双存储**: SQLite + JSON 双模式存储,数据更安全
@@ -381,11 +383,24 @@ POST /api/v1/repos/batch-add
 
 ### 1. Git hook 没有触发?
 
-- 确认全局模板目录已正确配置:
-  ```bash
-  git config --global init.templatedir
-  ```
-- 为已有仓库重新运行 `git init`
+**确认已安装 hook**:
+- 为仓库安装 hook 后,会同时安装 `post-commit` 和 `pre-push` 两个 hook
+- 检查仓库的 `.git/hooks/` 目录,应该能看到这两个文件
+
+**确认全局模板目录已正确配置**:
+- 全局模板目录主要用于新创建的仓库
+- 对于已有仓库,需要通过 Web 界面手动安装 hook
+
+**查看 hook 文件**:
+```bash
+# 检查 hook 是否存在
+ls .git/hooks/post-commit
+ls .git/hooks/pre-push
+
+# 查看 hook 内容
+cat .git/hooks/post-commit
+cat .git/hooks/pre-push
+```
 
 ### 2. Web 服务无法启动?
 
@@ -393,7 +408,20 @@ POST /api/v1/repos/batch-add
 - 在 `config.json` 中修改端口配置
 - 确认 Python 依赖已安装
 
-### 3. 数据没有显示?
+### 3. 推送事件没有被记录?
+
+- `pre-push` hook 会在推送**之前**触发,这是正常的
+- 即使推送失败,事件也会被记录
+- 确认 `pre-push` hook 已正确安装:
+  ```bash
+  cat .git/hooks/pre-push
+  ```
+- 检查 hook 脚本是否有执行权限(Linux/Mac):
+  ```bash
+  chmod +x .git/hooks/pre-push
+  ```
+
+### 4. 数据没有显示?
 
 - 确认数据库文件存在: `data/gitsee.db`
 - 检查 Git hook 脚本是否有执行权限
