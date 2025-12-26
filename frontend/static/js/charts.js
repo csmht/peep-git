@@ -7,9 +7,10 @@ class ChartsManager {
     constructor() {
         this.charts = {};
         this.colors = {
-            commit: 'rgba(40, 167, 69, 0.8)',
-            push: 'rgba(0, 123, 255, 0.8)',
-            grid: 'rgba(0, 0, 0, 0.1)'
+            commit: 'rgba(255, 105, 180, 0.8)',
+            push: 'rgba(255, 182, 193, 0.8)',
+            grid: 'rgba(255, 182, 193, 0.2)',
+            text: '#FF1493'
         };
     }
 
@@ -55,17 +56,26 @@ class ChartsManager {
                         beginAtZero: true,
                         grid: {
                             color: this.colors.grid
+                        },
+                        ticks: {
+                            color: this.colors.text
                         }
                     },
                     x: {
                         grid: {
                             color: this.colors.grid
+                        },
+                        ticks: {
+                            color: this.colors.text
                         }
                     }
                 },
                 plugins: {
                     legend: {
-                        position: 'top'
+                        position: 'top',
+                        labels: {
+                            color: this.colors.text
+                        }
                     }
                 }
             }
@@ -94,8 +104,8 @@ class ChartsManager {
             this.charts.repo.destroy();
         }
 
-        const labels = data.map(d => getRepoName(d.repo_path));
-        const values = data.map(d => d.count);
+        const labels = data.map(d => d.repo_name);
+        const values = data.map(d => d.activity_count);
         const colors = this.generateColors(data.length);
 
         this.charts.repo = new Chart(ctx, {
@@ -112,7 +122,10 @@ class ChartsManager {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'right'
+                        position: 'right',
+                        labels: {
+                            color: this.colors.text
+                        }
                     },
                     tooltip: {
                         callbacks: {
@@ -161,11 +174,17 @@ class ChartsManager {
                         beginAtZero: true,
                         grid: {
                             color: this.colors.grid
+                        },
+                        ticks: {
+                            color: this.colors.text
                         }
                     },
                     y: {
                         grid: {
                             display: false
+                        },
+                        ticks: {
+                            color: this.colors.text
                         }
                     }
                 },
@@ -183,14 +202,16 @@ class ChartsManager {
      */
     generateColors(count) {
         const baseColors = [
-            'rgba(102, 126, 234, 0.8)',
-            'rgba(118, 75, 162, 0.8)',
-            'rgba(40, 167, 69, 0.8)',
-            'rgba(0, 123, 255, 0.8)',
-            'rgba(255, 193, 7, 0.8)',
-            'rgba(220, 53, 69, 0.8)',
-            'rgba(23, 162, 184, 0.8)',
-            'rgba(111, 66, 193, 0.8)'
+            'rgba(255, 105, 180, 0.9)',   // 热粉色
+            'rgba(255, 182, 193, 0.9)',  // 浅粉色
+            'rgba(255, 192, 203, 0.9)',  // 粉红色
+            'rgba(219, 112, 147, 0.9)',  // 苍紫罗兰色
+            'rgba(255, 20, 147, 0.9)',   // 深粉色
+            'rgba(255, 228, 225, 0.9)',  // 薄雾玫瑰色
+            'rgba(255, 240, 245, 0.9)',  // 淡紫红色
+            'rgba(221, 160, 221, 0.9)',  // 梅红色
+            'rgba(238, 130, 238, 0.9)',  // 紫罗兰色
+            'rgba(255, 174, 185, 0.9)'   // 浅玫瑰色
         ];
 
         const colors = [];

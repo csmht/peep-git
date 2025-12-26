@@ -143,14 +143,8 @@ async function loadTodaySummary() {
         const response = await fetch('/api/v1/today-summary');
         const result = await response.json();
 
-        console.log('[DEBUG] API 响应:', result);
-
         if (result.success) {
             const { stats, evaluation } = result.data;
-
-            console.log('[DEBUG] stats:', stats);
-            console.log('[DEBUG] commit_count:', stats.commit_count);
-            console.log('[DEBUG] push_count:', stats.push_count);
 
             // 更新统计数字
             document.getElementById('today-commits').textContent = stats.commit_count;
@@ -161,17 +155,29 @@ async function loadTodaySummary() {
             if (evaluation) {
                 // 有评价内容时显示
                 evaluationDiv.style.display = 'block';
+
+                // 将评价文本存储到 data 属性中,避免 HTML 注入问题
+                const button = document.createElement('button');
+                button.className = 'save-evaluation-btn';
+                button.textContent = '💾 记录评价';
+                button.dataset.evaluation = evaluation;
+                button.onclick = function() {
+                    saveEvaluation(this.dataset.evaluation);
+                };
+
                 evaluationDiv.innerHTML = `
                     <div class="evaluation-content fade-in">
-                        <img src="/static/images/characters/mascot.png" alt="角色" class="evaluation-avatar-img">
+                        <img src="/static/images/characters/mascot.png" alt="角色" class="evaluation-avatar-img" onerror="this.style.display='none'">
                         <div class="evaluation-text-wrapper">
-                            <div class="evaluation-text">${evaluation}</div>
-                            <button class="save-evaluation-btn" onclick="saveEvaluation('${evaluation.replace(/'/g, "\\'")}')">
-                                💾 记录评价
-                            </button>
+                            <div class="evaluation-text"></div>
                         </div>
                     </div>
                 `;
+
+                // 安全地插入评价文本和按钮
+                const textWrapper = evaluationDiv.querySelector('.evaluation-text-wrapper');
+                textWrapper.querySelector('.evaluation-text').textContent = evaluation;
+                textWrapper.appendChild(button);
             } else {
                 // 没有评价内容时隐藏
                 evaluationDiv.style.display = 'none';

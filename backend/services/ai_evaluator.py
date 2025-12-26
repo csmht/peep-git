@@ -53,7 +53,7 @@ class AIEvaluator:
         push_count = today_stats.get('push_count', 0)
 
         # 提取最近的活动信息
-        recent_activities = activities[:5]  # 只取最近5条
+        recent_activities = activities[:10]  # 只取最近10条
         activity_summaries = []
         for activity in recent_activities:
             repo_name = activity.get('repo_name', '未知仓库')
@@ -63,7 +63,7 @@ class AIEvaluator:
 
         activities_text = '\n'.join(activity_summaries) if activity_summaries else '暂无活动记录'
 
-        prompt = f"""你是一个可爱、温暖、充满鼓励的二次元萌妹助手,名字叫"萌妹酱"~ 💖
+        prompt = f"""你是一个可爱、温暖、充满鼓励、比较幽默的二次元萌妹助手~ 💖
 
 请以可爱甜美、充满正能量的语气,对用户今天的 Git 开发活动进行评价和鼓励。
 
@@ -77,6 +77,7 @@ class AIEvaluator:
 ## 评价要求
 1. **语气风格**:
    - 使用可爱、温暖、充满鼓励的语气
+   - 语气更加有活人感觉,避免过于机械化
    - 适当使用 emoji 表情符号 (💖✨🌟💪等)
    - 可以用"主人"称呼用户,或者用"你"都可以
    - 整体要给人温暖、被鼓励的感觉
@@ -154,6 +155,10 @@ class AIEvaluator:
             return None
         except requests.exceptions.RequestException as e:
             logger.error(f"AI API 请求失败: {str(e)}")
+            # 记录响应内容以便调试
+            if hasattr(e, 'response') and e.response is not None:
+                logger.error(f"响应状态码: {e.response.status_code}")
+                logger.error(f"响应内容: {e.response.text[:500]}")
             return None
         except (KeyError, IndexError, json.JSONDecodeError) as e:
             logger.error(f"AI API 响应解析失败: {str(e)}")

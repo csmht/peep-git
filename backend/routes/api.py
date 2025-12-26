@@ -461,7 +461,6 @@ def get_today_summary():
     try:
         # 获取今日日期
         today = date.today().strftime('%Y-%m-%d')
-        print(f"[DEBUG API] Today is: {today}")
 
         # 获取今日统计
         db = Database()
@@ -477,7 +476,6 @@ def get_today_summary():
         # 计算统计信息
         commit_count = sum(1 for a in activities if a['activity_type'] == 'commit')
         push_count = sum(1 for a in activities if a['activity_type'] == 'push')
-        logger.info(f"Today stats: commits={commit_count}, pushes={push_count}")
 
         today_stats = {
             'date': today,
