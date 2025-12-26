@@ -1,10 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}仓库管理 - GitSee{% endblock %}
+{% block title %}仓库管理 - PEEP GIT{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 <style>
+.cute-subtitle {
+    text-align: center;
+    color: #DB7093;
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+}
+
+.cute-list-title {
+    color: #FF1493;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
 .repo-actions {
     display: flex;
     gap: 10px;
@@ -12,27 +26,31 @@
 }
 
 .btn-scan {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #FF69B4, #FF1493);
     color: white;
     padding: 12px 24px;
     border: none;
-    border-radius: 8px;
+    border-radius: 25px;
     cursor: pointer;
     font-size: 16px;
     margin-bottom: 20px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .btn-scan:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.5);
 }
 
 .scan-options {
     display: none;
-    background: #f8f9fa;
+    background: linear-gradient(135deg, #FFF0F5, #FFE4E1);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 15px;
     margin-bottom: 20px;
+    border: 3px double #FFB6C1;
 }
 
 .scan-options.active {
@@ -45,15 +63,9 @@
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #DB7093;
 }
 
 .repo-grid {
@@ -64,16 +76,27 @@
 }
 
 .repo-card {
-    background: white;
-    border-radius: 10px;
+    background: linear-gradient(135deg, #FFF0F5, #FFE4E1);
+    border-radius: 20px;
     padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 5px 15px rgba(255, 182, 193, 0.3);
+    border: 3px double #FFB6C1;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+}
+
+.repo-card::before {
+    content: '📦';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    opacity: 0.3;
 }
 
 .repo-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(255, 182, 193, 0.4);
 }
 
 .repo-header {
@@ -85,8 +108,8 @@
 
 .repo-name {
     font-size: 18px;
-    font-weight: 600;
-    color: #333;
+    font-weight: bold;
+    color: #4A4A4A;
     margin-bottom: 5px;
 }
 
@@ -97,20 +120,20 @@
 }
 
 .repo-status {
-    padding: 4px 12px;
-    border-radius: 12px;
+    padding: 6px 14px;
+    border-radius: 20px;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: bold;
 }
 
 .repo-status.monitored {
-    background: #d4edda;
-    color: #155724;
+    background: linear-gradient(135deg, #98FB98, #90EE90);
+    color: #2E7D32;
 }
 
 .repo-status.unmonitored {
-    background: #f8d7da;
-    color: #721c24;
+    background: linear-gradient(135deg, #FFB6C1, #FF69B4);
+    color: white;
 }
 
 .repo-stats {
@@ -121,16 +144,17 @@
 }
 
 .stat-item {
-    background: #f8f9fa;
-    padding: 10px;
-    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 12px;
+    border-radius: 15px;
     text-align: center;
+    border: 2px solid #FFB6C1;
 }
 
 .stat-value {
-    font-size: 20px;
-    font-weight: 600;
-    color: #667eea;
+    font-size: 24px;
+    font-weight: bold;
+    color: #FF69B4;
 }
 
 .stat-label {
@@ -146,48 +170,46 @@
 }
 
 .btn-small {
-    padding: 6px 12px;
+    padding: 8px 16px;
     font-size: 13px;
-    border-radius: 5px;
+    border-radius: 20px;
     border: none;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s;
+    font-weight: bold;
 }
 
-.btn-primary {
-    background: #667eea;
+.btn-success {
+    background: linear-gradient(135deg, #98FB98, #90EE90);
+    color: #2E7D32;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #FFB6C1, #FF69B4);
     color: white;
 }
 
 .btn-secondary {
-    background: #6c757d;
-    color: white;
-}
-
-.btn-success {
-    background: #28a745;
-    color: white;
-}
-
-.btn-danger {
-    background: #dc3545;
+    background: linear-gradient(135deg, #B0C4DE, #87CEEB);
     color: white;
 }
 
 .btn-small:hover {
-    opacity: 0.9;
-    transform: scale(1.05);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
 }
 
 .add-repo-form {
-    background: #f8f9fa;
+    background: linear-gradient(135deg, #FFF0F5, #FFE4E1);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 15px;
     margin-bottom: 20px;
+    border: 3px double #FFB6C1;
 }
 
 .add-repo-form h3 {
     margin-bottom: 15px;
+    color: #DB7093;
 }
 
 .form-row {
@@ -202,7 +224,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(255, 182, 193, 0.5);
     display: none;
     justify-content: center;
     align-items: center;
@@ -216,51 +238,53 @@
 .spinner {
     background: white;
     padding: 30px;
-    border-radius: 10px;
+    border-radius: 20px;
     text-align: center;
+    border: 3px double #FFB6C1;
+    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3);
 }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="repositories-page">
-    <h2>仓库管理</h2>
-    <p>管理和监控您的 Git 仓库</p>
+    <h2 class="cute-section-title">📦 仓库小屋</h2>
+    <p class="cute-subtitle">管理你的 Git 仓库哦~</p>
 
     <!-- 扫描按钮 -->
-    <button id="scan-btn" class="btn-scan">
-        <span>🔍 扫描 Git 仓库</span>
+    <button id="scan-btn" class="btn-scan cute-btn-scan">
+        <span>🔍 扫描仓库</span>
     </button>
 
     <!-- 扫描选项 -->
-    <div id="scan-options" class="scan-options">
-        <h3>扫描选项</h3>
+    <div id="scan-options" class="scan-options cute-options">
+        <h3>✨ 扫描设置</h3>
         <div class="form-group">
-            <label>扫描目录</label>
-            <input type="text" id="scan-directories" placeholder="多个目录用分号分隔,留空则扫描常见目录">
+            <label>📁 扫描目录</label>
+            <input type="text" id="scan-directories" class="form-control" placeholder="多个目录用分号分隔,留空则扫描常见目录">
         </div>
         <div class="form-group">
-            <label>扫描深度</label>
-            <input type="number" id="scan-depth" value="4" min="1" max="10">
+            <label>📏 扫描深度</label>
+            <input type="number" id="scan-depth" class="form-control" value="4" min="1" max="10">
         </div>
-        <button id="start-scan-btn" class="btn btn-primary">开始扫描</button>
-        <button id="cancel-scan-btn" class="btn btn-secondary">取消</button>
+        <button id="start-scan-btn" class="btn btn-primary">✓ 开始扫描</button>
+        <button id="cancel-scan-btn" class="btn btn-secondary">✗ 取消</button>
     </div>
 
     <!-- 添加仓库表单 -->
-    <div class="add-repo-form">
-        <h3>手动添加仓库</h3>
+    <div class="add-repo-form cute-form-card">
+        <h3>✏️ 手动添加</h3>
         <div class="form-row">
             <div style="flex: 1;">
-                <input type="text" id="add-repo-path" placeholder="输入 Git 仓库路径">
+                <input type="text" id="add-repo-path" class="form-control" placeholder="输入 Git 仓库路径">
             </div>
-            <button id="add-repo-btn" class="btn btn-primary">添加</button>
+            <button id="add-repo-btn" class="btn btn-primary">➕ 添加</button>
         </div>
-        <small style="color: #666;">例如: C:\Users\YourName\projects\my-repo</small>
+        <small style="color: #DB7093;">例如: C:\Users\YourName\projects\my-repo</small>
     </div>
 
     <!-- 仓库列表 -->
-    <h3 style="margin-top: 30px;">已监控仓库 (<span id="repo-count">0</span>)</h3>
+    <h3 class="cute-list-title">已监控仓库 (<span id="repo-count">0</span>)</h3>
     <div id="repo-list" class="repo-grid">
         <div class="loading">加载中...</div>
     </div>
@@ -317,7 +341,7 @@ function renderRepos() {
                     <div class="repo-path" title="${repo.repo_path}">${repo.repo_path}</div>
                 </div>
                 <span class="repo-status ${repo.is_monitored ? 'monitored' : 'unmonitored'}">
-                    ${repo.is_monitored ? '✓ 已监控' : '✗ 未监控'}
+                    ${repo.is_monitored ? '✓ 监控中' : '✗ 未监控'}
                 </span>
             </div>
 
@@ -352,8 +376,8 @@ function renderRepos() {
 
             <div class="repo-actions">
                 ${repo.is_monitored
-                    ? `<button class="btn-small btn-danger" onclick="uninstallHook('${encodeURIComponent(repo.repo_path)}')">卸载 Hook</button>`
-                    : `<button class="btn-small btn-success" onclick="installHook('${encodeURIComponent(repo.repo_path)}')">安装 Hook</button>`
+                    ? `<button class="btn-small btn-danger" onclick="uninstallHook('${encodeURIComponent(repo.repo_path)}')">✗ 卸载监控</button>`
+                    : `<button class="btn-small btn-success" onclick="installHook('${encodeURIComponent(repo.repo_path)}')">✓ 安装监控</button>`
                 }
                 <button class="btn-small btn-secondary" onclick="deleteRepo('${encodeURIComponent(repo.repo_path)}')">删除</button>
             </div>

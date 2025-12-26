@@ -1,6 +1,11 @@
-# peep - Git 活动监视工具
+# PEEP GIT - Git 活动监视工具
 
 一个用于监视本地 Git 提交和推送活动的工具,通过全局 Git hook 捕获所有操作,并提供 Web 界面展示统计数据。
+
+## ✨ 特色
+
+- 🎀 **可爱甜美风**: 二次元萌妹风格设计,粉色系配色,丰富的动画效果
+- 💖 **精致体验**: 心跳标题、弹跳按钮、飘浮卡片等丰富交互
 
 ## 功能特性
 
@@ -14,12 +19,17 @@
 - ✅ **双存储**: SQLite + JSON 双模式存储,数据更安全
 - ✅ **统计分析**: 提供多维度统计数据(按日期、仓库、分支)
 - ✅ **数据导出**: 支持 CSV 和 JSON 格式导出
-- ✅ **Web 界面**: 美观易用的仪表盘界面
+- ✅ **Web 界面**: 二次元萌妹风格的可爱仪表盘界面
+- ✅ **GitHub 集成**: 直接访问 [GitHub 仓库](https://github.com/csmht/peep-git)
 
 ## 技术栈
 
 - **后端**: Python 3.7+ + Flask
 - **前端**: HTML + CSS + JavaScript + Chart.js
+  - 采用**可爱甜美风**二次元萌妹设计
+  - 粉色系渐变配色 (#FFB6C1, #FF69B4, #FF1493)
+  - 丰富的 CSS 动画效果(心跳、弹跳、旋转等)
+  - 完全响应式设计,支持移动端
 - **数据库**: SQLite
 - **存储**: JSON + SQLite 双模式
 
@@ -109,20 +119,22 @@ python backend/app.py
 
 打开浏览器访问: `http://localhost:5000`
 
-GitSee 提供三个主要页面:
+PEEP GIT 提供三个主要页面:
 
-1. **仪表盘** (`/`) - 查看整体统计和图表
+1. **主页** (`/`) - 查看整体统计和图表
 2. **详细记录** (`/details`) - 查看所有 Git 操作记录
-3. **仓库管理** (`/repositories`) - 管理监控的仓库
+3. **仓库小屋** (`/repositories`) - 管理监控的仓库
+
+所有页面均采用**可爱甜美风**设计,提供愉悦的使用体验~
 
 ## 仓库管理
 
-GitSee 提供了强大的仓库管理功能,让您可以轻松管理所有 Git 仓库的监控。
+PEEP GIT 提供了强大的仓库管理功能,让您可以轻松管理所有 Git 仓库的监控。
 
 ### 方式一:自动扫描(推荐)
 
 1. 访问 `http://localhost:5000/repositories`
-2. 点击 **"🔍 扫描 Git 仓库"** 按钮
+2. 点击 **"🔍 扫描仓库"** 按钮
 3. 选择扫描选项:
    - **扫描目录**: 留空则扫描常见目录(用户主目录、桌面、文档等),或手动指定目录(用分号分隔)
    - **扫描深度**: 控制递归扫描的深度(默认 4 层)
@@ -136,9 +148,9 @@ GitSee 提供了强大的仓库管理功能,让您可以轻松管理所有 Git �
 
 ### 方式二:手动添加
 
-1. 在仓库管理页面,找到 **"手动添加仓库"** 表单
+1. 在仓库管理页面,找到 **"✏️ 手动添加"** 表单
 2. 输入 Git 仓库的完整路径
-3. 点击 **"添加"** 按钮
+3. 点击 **"➕ 添加"** 按钮
 
 例如:
 - Windows: `C:\Users\YourName\projects\my-repo`
@@ -157,9 +169,9 @@ GitSee 提供了强大的仓库管理功能,让您可以轻松管理所有 Git �
   - 当前分支
   - 远程仓库 URL
 
-- **安装/卸载 Hook**:
-  - 点击 **"安装 Hook"** 为仓库启用监控
-  - 点击 **"卸载 Hook"** 停止监控仓库
+- **安装/卸载监控**:
+  - 点击 **"✓ 安装监控"** 为仓库启用监控
+  - 点击 **"✗ ��载监控"** 停止监控仓库
 
 - **删除仓库**: 从监控列表中移除仓库(不会删除实际文件)
 
@@ -180,7 +192,7 @@ git push
 ## 项目结构
 
 ```
-gitSee/
+peep-git/
 ├── backend/                          # 后端核心代码
 │   ├── models/                       # 数据模型
 │   │   ├── database.py              # 数据库操作
@@ -198,14 +210,19 @@ gitSee/
 │
 ├── frontend/                         # 前端资源
 │   ├── static/
-│   │   ├── css/                     # 样式文件
+│   │   ├── css/                     # 样式文件(可爱甜美风)
+│   │   │   ├── main.css             # 全局样式
+│   │   │   ├── dashboard.css        # 仪表盘样式
+│   │   │   └── animations.css       # 动画库
 │   │   ├── js/                      # JavaScript 文件
+│   │   ├── images/                  # 图片资源
+│   │   │   └── characters/          # 角色图片文件夹
 │   │   └── lib/                     # 第三方库
 │   └── templates/                   # HTML 模板
 │       ├── base.html                # 基础模板
-│       ├── dashboard.html           # 仪表盘页面
+│       ├── dashboard.html           # 主页
 │       ├── details.html             # 详细记录页面
-│       └── repositories.html        # 仓库管理页面
+│       └── repositories.html        # 仓库小屋页面
 │
 ├── hooks_global/                     # 全局 hook 脚本
 │   ├── templates/hooks/             # Hook 模板
@@ -217,7 +234,7 @@ gitSee/
 │   └── check_python.py              # Python 环境检查
 │
 ├── data/                            # 数据存储目录
-│   ├── gitsee.db                    # SQLite 数据库
+│   ├── peep_git.db                  # SQLite 数据库
 │   └── records.json                 # JSON 备份
 │
 ├── logs/                            # 日志目录
@@ -381,15 +398,29 @@ POST /api/v1/repos/batch-add
 
 ## 常见问题
 
-### 1. Git hook 没有触发?
+### 1. 如何自定义角色图片?
+
+PEEP GIT 支持自定义二次元萌妹角色图片:
+
+1. 前往 `frontend/static/images/characters/` 文件夹
+2. 替换以下文件:
+   - `mascot.png` - 主角形象 (建议 300x400px)
+   - `banner-bg.png` - 横幅背景 (建议 1200x200px)
+   - `loading.gif` - 加载动画 (建议 100x100px)
+   - `dashboard-bg.png` - 仪表盘背景 (建议 1400x800px)
+3. 刷新浏览器查看效果
+
+详细说明请参考 [`frontend/static/images/README.md`](frontend/static/images/README.md)
+
+### 2. Git hook 没有触发?
 
 **确认已安装 hook**:
-- 为仓库安装 hook 后,会同时安装 `post-commit` 和 `pre-push` 两个 hook
+- 为仓库安装监控后,会同时安装 `post-commit` 和 `pre-push` 两个 hook
 - 检查仓库的 `.git/hooks/` 目录,应该能看到这两个文件
 
 **确认全局模板目录已正确配置**:
 - 全局模板目录主要用于新创建的仓库
-- 对于已有仓库,需要通过 Web 界面手动安装 hook
+- 对于已有仓库,需要通过 Web 界面手动安装监控
 
 **查看 hook 文件**:
 ```bash
@@ -402,13 +433,13 @@ cat .git/hooks/post-commit
 cat .git/hooks/pre-push
 ```
 
-### 2. Web 服务无法启动?
+### 3. Web 服务无法启动?
 
 - 检查端口 5000 是否被占用
 - 在 `config.json` 中修改端口配置
 - 确认 Python 依赖已安装
 
-### 3. 推送事件没有被记录?
+### 4. 推送事件没有被记录?
 
 - `pre-push` hook 会在推送**之前**触发,这是正常的
 - 即使推送失败,事件也会被记录
@@ -421,9 +452,9 @@ cat .git/hooks/pre-push
   chmod +x .git/hooks/pre-push
   ```
 
-### 4. 数据没有显示?
+### 5. 数据没有显示?
 
-- 确认数据库文件存在: `data/gitsee.db`
+- 确认数据库文件存在: `data/peep_git.db`
 - 检查 Git hook 脚本是否有执行权限
 - 查看日志文件: `logs/app.log`
 
@@ -439,13 +470,27 @@ git config --global --unset init.templatedir
 
 ```bash
 # 删除项目目录
-rm -rf gitSee
+rm -rf peep-git
 ```
 
+## 设计理念
 
+PEEP GIT 采用**可爱甜美风**的二次元萌妹设计风格,为开发工作增添一份温馨与愉悦:
+
+- **配色方案**: 温柔的粉色渐变 (#FFB6C1 → #FFC0CB → #FFE4E1)
+- **装饰元素**: 星星、花朵、爱心等可爱符号点缀
+- **动画效果**: 心跳、弹跳、旋转等丰富交互
+- **圆角设计**: 所有元素采用圆润边角,营造柔和视觉
+- **响应式布局**: 完美适配桌面、平板、手机各种设备
+
+## 贡献
 
 欢迎提交 Issue 和 Pull Request!
 
 ## 联系方式
 
-如有问题,请提交 Issue。
+如有问题,请提交 Issue 或访问 [GitHub 仓库](https://github.com/csmht/peep-git)。
+
+---
+
+**Made with ♡ by 萌妹酱**

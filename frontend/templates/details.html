@@ -1,34 +1,34 @@
 {% extends "base.html" %}
 
-{% block title %}详细记录 - GitSee{% endblock %}
+{% block title %}详细记录 - PEEP GIT{% endblock %}
 
 {% block content %}
 <div class="details-page">
-    <h2>详细活动记录</h2>
+    <h2 class="cute-section-title">📋 详细记录本</h2>
 
-    <div class="filter-bar">
+    <div class="filter-bar cute-filter-bar">
         <select id="activity-type-filter" class="form-control">
-            <option value="">全部类型</option>
-            <option value="commit">提交</option>
-            <option value="push">推送</option>
+            <option value="">🎀 全部类型</option>
+            <option value="commit">💝 提交</option>
+            <option value="push">🚀 推送</option>
         </select>
 
-        <input type="text" id="repo-search" class="form-control" placeholder="搜索仓库...">
+        <input type="text" id="repo-search" class="form-control" placeholder="🔍 搜索仓库...">
 
-        <button id="export-btn" class="btn btn-secondary">导出数据</button>
+        <button id="export-btn" class="btn btn-secondary">📥 导出数据</button>
     </div>
 
-    <div class="table-container">
-        <table class="data-table">
+    <div class="table-container cute-table-container">
+        <table class="data-table cute-table">
             <thead>
                 <tr>
-                    <th>时间</th>
-                    <th>类型</th>
-                    <th>仓库</th>
-                    <th>分支</th>
-                    <th>提交哈希</th>
-                    <th>消息</th>
-                    <th>作者</th>
+                    <th>⏰ 时间</th>
+                    <th>🏷️ 类型</th>
+                    <th>📦 仓库</th>
+                    <th>🌿 分支</th>
+                    <th>🔖 哈希</th>
+                    <th>💬 消息</th>
+                    <th>👤 作者</th>
                 </tr>
             </thead>
             <tbody id="details-table-body">
@@ -39,10 +39,10 @@
         </table>
     </div>
 
-    <div class="pagination">
-        <button id="prev-page" class="btn btn-secondary" disabled>上一页</button>
+    <div class="pagination cute-pagination">
+        <button id="prev-page" class="btn btn-secondary" disabled>◀ 上一页</button>
         <span id="page-info">第 1 页</span>
-        <button id="next-page" class="btn btn-secondary">下一页</button>
+        <button id="next-page" class="btn btn-secondary">下一页 ▶</button>
     </div>
 </div>
 {% endblock %}

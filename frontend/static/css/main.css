@@ -1,130 +1,255 @@
-/* 全局样式 */
+/* ========== PEEP GIT - 全局样式 ========== */
 
+/* ========== 全局重置 ========== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* ========== 全局背景和字体 ========== */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Microsoft YaHei UI', 'Segoe UI', '微软雅黑', 'YouYuan', '幼圆', sans-serif;
+    background: linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 50%, #FFE4E1 100%);
+    background-attachment: fixed;
     min-height: 100vh;
-    color: #333;
+    color: #4A4A4A;
     line-height: 1.6;
+    position: relative;
+}
+
+/* 波点装饰层 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle, #FFB6C1 20%, transparent 20%);
+    background-position: 0 0, 25px 25px;
+    background-size: 50px 50px;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
 }
 
 .container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
+    position: relative;
+    z-index: 1;
 }
 
-/* 头部样式 */
+/* ========== 头部样式 ========== */
 .header {
     text-align: center;
     color: white;
     margin-bottom: 30px;
+    position: relative;
 }
 
-.header h1 {
-    font-size: 3rem;
+.logo-wrapper {
+    display: inline-block;
+}
+
+.cute-title {
+    font-size: 3.5rem;
+    color: #FF1493;
+    text-shadow:
+        2px 2px 0 #FFF,
+        4px 4px 0 #FFB6C1,
+        6px 6px 10px rgba(255, 105, 180, 0.3);
+    animation: heartbeat 2s ease-in-out infinite;
+    display: inline-block;
+    position: relative;
     margin-bottom: 10px;
 }
 
 .subtitle {
-    font-size: 1.2rem;
-    opacity: 0.9;
+    font-size: 1.3rem;
+    color: #FFF;
+    text-shadow: 1px 1px 3px rgba(255, 105, 180, 0.5);
+    font-weight: 500;
 }
 
-/* 导航样式 */
+/* ========== 导航样式 ========== */
 .nav {
     display: flex;
     justify-content: center;
     gap: 20px;
     margin-bottom: 30px;
+    flex-wrap: wrap;
 }
 
 .nav-link {
-    color: white;
+    color: #DB7093;
     text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    transition: background 0.3s;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 3px double #FF69B4;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .nav-link:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, #FFB6C1, #FF69B4);
+    color: white;
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 10px 25px rgba(255, 105, 180, 0.4);
 }
 
-/* 主内容区域 */
+.nav-icon {
+    font-size: 1.2rem;
+}
+
+/* ========== 主内容区域 ========== */
 .main-content {
-    background: white;
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    border: 3px double #FFB6C1;
+    padding: 35px;
+    box-shadow:
+        0 15px 35px rgba(255, 105, 180, 0.2),
+        inset 0 0 50px rgba(255, 182, 193, 0.1);
+    position: relative;
+    margin-bottom: 30px;
 }
 
-/* 表单控件 */
+/* 装饰角星 */
+.main-content::before,
+.main-content::after {
+    content: '✦';
+    position: absolute;
+    font-size: 24px;
+    color: #FFB6C1;
+    animation: cute-spin 4s linear infinite;
+}
+
+.main-content::before {
+    top: 10px;
+    left: 15px;
+}
+
+.main-content::after {
+    top: 10px;
+    right: 15px;
+    animation-direction: reverse;
+}
+
+/* ========== 表单控件 ========== */
 .form-control {
     padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border: 2px solid #FFB6C1;
+    border-radius: 15px;
     font-size: 14px;
     outline: none;
-    transition: border 0.3s;
+    transition: all 0.3s;
+    background: white;
+    color: #DB7093;
 }
 
 .form-control:focus {
-    border-color: #667eea;
+    border-color: #FF69B4;
+    box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.2);
 }
 
-/* 按钮样式 */
+/* ========== 按钮样式 ========== */
 .btn {
-    padding: 10px 20px;
+    padding: 12px 28px;
     border: none;
-    border-radius: 5px;
+    border-radius: 25px;
     cursor: pointer;
     font-size: 14px;
-    transition: all 0.3s;
+    font-weight: bold;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .btn-primary {
-    background: #667eea;
+    background: linear-gradient(135deg, #FF69B4, #FF1493);
     color: white;
+    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
 }
 
 .btn-primary:hover {
-    background: #5568d3;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.5);
 }
 
 .btn-secondary {
-    background: #6c757d;
+    background: linear-gradient(135deg, #FFB6C1, #DDA0DD);
     color: white;
+    box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
 }
 
 .btn-secondary:hover {
-    background: #5a6268;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(221, 160, 221, 0.5);
 }
 
 .btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none !important;
 }
 
-/* 页脚样式 */
+.btn-icon {
+    font-size: 1.1rem;
+}
+
+/* ========== 页脚样式 ========== */
 .footer {
     text-align: center;
     color: white;
     margin-top: 30px;
-    opacity: 0.8;
+    padding: 20px;
 }
 
-/* 工具类 */
+.footer-text {
+    font-size: 0.95rem;
+    text-shadow: 1px 1px 2px rgba(255, 105, 180, 0.3);
+}
+
+.github-link {
+    color: #FFF;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    transition: all 0.3s;
+    margin-left: 5px;
+}
+
+.github-link:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.heart {
+    color: #FF1493;
+    animation: heartbeat 1.5s ease-in-out infinite;
+    display: inline-block;
+}
+
+/* ========== 工具类 ========== */
 .loading {
     text-align: center;
-    color: #999;
+    color: #FF69B4;
     padding: 20px;
+    font-weight: 500;
 }
 
 .no-data {
@@ -135,25 +260,73 @@ body {
 
 .badge {
     display: inline-block;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
     font-weight: bold;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
 .badge-commit {
-    background: #28a745;
-    color: white;
+    background: linear-gradient(135deg, #98FB98, #90EE90);
+    color: #2E7D32;
 }
 
 .badge-push {
-    background: #007bff;
-    color: white;
+    background: linear-gradient(135deg, #87CEEB, #87CEFA);
+    color: #0277BD;
 }
 
 code {
-    background: #f4f4f4;
-    padding: 2px 6px;
-    border-radius: 3px;
+    background: #FFF0F5;
+    padding: 3px 8px;
+    border-radius: 8px;
     font-family: 'Courier New', monospace;
+    color: #DB7093;
+    border: 1px solid #FFB6C1;
+}
+
+/* ========== 响应式设计 ========== */
+@media (max-width: 768px) {
+    .cute-title {
+        font-size: 2.5rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .nav-link {
+        padding: 10px 20px;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .main-content {
+        padding: 25px;
+        border-radius: 15px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cute-title {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
 }

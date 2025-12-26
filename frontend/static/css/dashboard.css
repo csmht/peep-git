@@ -1,11 +1,16 @@
-/* 仪表盘样式 */
+/* ========== PEEP GIT - 仪表盘样式 ========== */
 
+/* ========== 工具栏 ========== */
 .toolbar {
     display: flex;
     gap: 15px;
     margin-bottom: 30px;
     flex-wrap: wrap;
     align-items: center;
+    background: linear-gradient(135deg, #FFF0F5, #FFE4E1);
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px dashed #FFB6C1;
 }
 
 .toolbar-group {
@@ -15,10 +20,11 @@
 }
 
 .toolbar-group label {
-    font-weight: 500;
+    font-weight: bold;
+    color: #DB7093;
 }
 
-/* 统计卡片 */
+/* ========== 统计卡片 ========== */
 .stats-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -27,26 +33,66 @@
 }
 
 .stat-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%);
     color: white;
-    padding: 20px;
-    border-radius: 10px;
+    padding: 25px;
+    border-radius: 20px;
     text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow:
+        0 8px 20px rgba(255, 105, 180, 0.3),
+        inset 0 0 30px rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* 光泽效果 */
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    animation: cute-spin 10s linear infinite;
+}
+
+.stat-card:hover {
+    transform: translateY(-10px) rotate(2deg);
+    box-shadow:
+        0 15px 40px rgba(255, 105, 180, 0.5),
+        inset 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+.stat-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    animation: cute-bounce 2s ease-in-out infinite;
+    display: block;
+    position: relative;
+    z-index: 1;
 }
 
 .stat-value {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     font-weight: bold;
-    margin-bottom: 5px;
+    text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.4);
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
 }
 
 .stat-label {
-    font-size: 0.9rem;
-    opacity: 0.9;
+    font-size: 1rem;
+    opacity: 0.95;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
 }
 
-/* 图表容器 */
+/* ========== 图表容器 ========== */
 .charts-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -55,52 +101,115 @@
 }
 
 .chart-card {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #FFF8DC;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(255, 182, 193, 0.3);
+    border: 3px double #FFB6C1;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* 装饰花朵 */
+.chart-card::before {
+    content: '✿';
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    color: #FFB6C1;
+    animation: cute-wiggle 3s ease-in-out infinite;
+}
+
+.chart-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(255, 182, 193, 0.4);
 }
 
 .chart-card h3 {
-    margin-bottom: 15px;
-    color: #333;
+    color: #DB7093;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
 }
 
 .chart-card canvas {
     max-height: 300px;
 }
 
-/* 最近活动 */
+/* ========== 最近活动 ========== */
 .recent-activities {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 20px;
+    background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);
+    border-radius: 20px;
+    padding: 25px;
+    border: 3px double #FFB6C1;
 }
 
 .recent-activities h3 {
-    margin-bottom: 15px;
-    color: #333;
+    color: #DB7093;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5rem;
 }
 
 .activities-list {
     max-height: 400px;
     overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* 滚动条美化 */
+.activities-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.activities-list::-webkit-scrollbar-track {
+    background: #FFE4E1;
+    border-radius: 10px;
+}
+
+.activities-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #FFB6C1, #FF69B4);
+    border-radius: 10px;
 }
 
 .activity-item {
     background: white;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border-left: 4px solid #667eea;
+    padding: 18px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    border-left: 5px solid #FF69B4;
+    box-shadow: 0 3px 10px rgba(255, 182, 193, 0.2);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: transform 0.2s;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 装饰爱心 */
+.activity-item::before {
+    content: '♡';
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    font-size: 40px;
+    color: rgba(255, 182, 193, 0.2);
+    transition: all 0.3s;
 }
 
 .activity-item:hover {
-    transform: translateX(5px);
+    transform: translateX(10px);
+    border-left-color: #FF1493;
+    box-shadow: 0 8px 20px rgba(255, 105, 180, 0.3);
+}
+
+.activity-item:hover::before {
+    right: 10px;
+    top: 10px;
+    opacity: 0.5;
 }
 
 .activity-info {
@@ -109,18 +218,21 @@
 
 .activity-time {
     font-size: 0.85rem;
-    color: #999;
+    color: #DB7093;
     margin-bottom: 5px;
+    font-weight: 500;
 }
 
 .activity-repo {
-    font-weight: 500;
-    color: #333;
+    font-weight: bold;
+    color: #4A4A4A;
+    margin-bottom: 3px;
 }
 
 .activity-branch {
-    color: #667eea;
+    color: #FF69B4;
     font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .activity-message {
@@ -130,25 +242,50 @@
 }
 
 .activity-badge {
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.8rem;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
     font-weight: bold;
     color: white;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
 .activity-badge.commit {
-    background: #28a745;
+    background: linear-gradient(135deg, #98FB98, #90EE90);
 }
 
 .activity-badge.push {
-    background: #007bff;
+    background: linear-gradient(135deg, #87CEEB, #87CEFA);
 }
 
-/* 详细记录页面 */
+/* ========== 可爱加载动画 ========== */
+.cute-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 30px;
+    color: #FF69B4;
+}
+
+.loading-spinner {
+    font-size: 3rem;
+    animation: heartbeat 1s ease-in-out infinite;
+}
+
+/* ========== 详细记录页面 ========== */
 .details-page h2 {
     margin-bottom: 20px;
-    color: #333;
+    color: #DB7093;
+    text-align: center;
+}
+
+.cute-section-title {
+    font-size: 2rem;
+    color: #FF1493;
+    text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.4);
+    text-align: center;
+    margin-bottom: 25px;
 }
 
 .filter-bar {
@@ -156,32 +293,45 @@
     gap: 15px;
     margin-bottom: 20px;
     flex-wrap: wrap;
+    background: linear-gradient(135deg, #FFF0F5, #FFE4E1);
+    padding: 15px;
+    border-radius: 15px;
+    border: 2px dashed #FFB6C1;
 }
 
 .table-container {
     overflow-x: auto;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
 }
 
 .data-table {
     width: 100%;
     border-collapse: collapse;
+    background: white;
 }
 
 .data-table th,
 .data-table td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #FFB6C1;
 }
 
 .data-table th {
-    background: #f8f9fa;
-    font-weight: 600;
-    color: #333;
+    background: linear-gradient(135deg, #FFB6C1, #FF69B4);
+    font-weight: bold;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.data-table tbody tr {
+    transition: all 0.3s ease;
 }
 
 .data-table tbody tr:hover {
-    background: #f8f9fa;
+    background: #FFF0F5;
+    transform: scale(1.01);
 }
 
 .pagination {
@@ -193,13 +343,27 @@
 }
 
 #page-info {
-    color: #666;
+    color: #DB7093;
+    font-weight: bold;
 }
 
-/* 响应式设计 */
+/* ========== 响应式设计 ========== */
 @media (max-width: 768px) {
     .stats-cards {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .stat-card {
+        padding: 20px;
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
     }
 
     .charts-container {
@@ -214,5 +378,29 @@
     .toolbar-group {
         flex-direction: column;
         align-items: stretch;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+    }
+
+    .chart-card {
+        padding: 15px;
+    }
+
+    .activity-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
     }
 }

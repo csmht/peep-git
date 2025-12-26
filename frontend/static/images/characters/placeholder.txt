@@ -1,0 +1,15 @@
+此文件夹用于存放二次元萌妹角色图片。
+
+请将以下图片文件放置在此目录:
+
+1. mascot.png - 主角形象 (300x400px)
+2. banner-bg.png - 横幅背景 (1200x200px)
+3. loading.gif - 加载动画 (100x100px)
+4. dashboard-bg.png - 仪表盘背景 (1400x800px)
+
+您可以从以下资源获取可爱的二次元角色图片:
+- Pixiv (https://www.pixiv.net/)
+- Zerochan (https://www.zerochan.net/)
+- Anime Pictures (https://anime-pictures.net/)
+
+请注意版权问题,建议使用原创角色或获得授权的图片。

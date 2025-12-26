@@ -3,21 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}GitSee - Git 活动监视器{% endblock %}</title>
+    <title>{% block title %}PEEP GIT - Git 活动监视器{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1>GitSee</h1>
-            <p class="subtitle">Git 活动监视器</p>
+            <div class="logo-wrapper">
+                <h1 class="cute-title">✿ PEEP GIT ✿</h1>
+                <p class="subtitle">你的贴心 Git 小管家</p>
+            </div>
         </header>
 
         <nav class="nav">
-            <a href="{{ url_for('web.index') }}" class="nav-link">仪表盘</a>
-            <a href="{{ url_for('web.details') }}" class="nav-link">详细记录</a>
-            <a href="{{ url_for('web.repositories') }}" class="nav-link">仓库管理</a>
+            <a href="{{ url_for('web.index') }}" class="nav-link cute-nav">
+                <span class="nav-icon">🏠</span>
+                <span>主页</span>
+            </a>
+            <a href="{{ url_for('web.details') }}" class="nav-link cute-nav">
+                <span class="nav-icon">📝</span>
+                <span>记录</span>
+            </a>
+            <a href="{{ url_for('web.repositories') }}" class="nav-link cute-nav">
+                <span class="nav-icon">📦</span>
+                <span>仓库</span>
+            </a>
         </nav>
 
         <main class="main-content">
@@ -25,7 +37,15 @@
         </main>
 
         <footer class="footer">
-            <p>&copy; 2025 GitSee - 本地 Git 活动监视工具</p>
+            <p class="footer-text">
+                Made with <span class="heart">♡</span> by 萌妹酱 |
+                <a href="https://github.com/csmht/peep-git" target="_blank" class="github-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+            </p>
         </footer>
     </div>
 
