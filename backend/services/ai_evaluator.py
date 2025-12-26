@@ -3,7 +3,12 @@ AI 评价服务模块
 使用大语言模型对今日的 Git 活动进行可爱鼓励的评价
 """
 
-import requests
+try:
+    import requests
+    REQUESTS_AVAILABLE = True
+except ImportError:
+    REQUESTS_AVAILABLE = False
+
 import json
 import logging
 from typing import List, Dict, Optional

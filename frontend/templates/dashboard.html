@@ -30,7 +30,7 @@
     <div class="ai-evaluation" id="ai-evaluation">
         <div class="evaluation-loading">
             <div class="loading-heart">♡</div>
-            <span>萌妹酱正在思考...</span>
+            <span>正在思考...</span>
         </div>
     </div>
 </div>
@@ -135,12 +135,17 @@ async function loadTodaySummary() {
             // 更新AI评价
             const evaluationDiv = document.getElementById('ai-evaluation');
             if (evaluation) {
+                // 有评价内容时显示
+                evaluationDiv.style.display = 'block';
                 evaluationDiv.innerHTML = `
                     <div class="evaluation-content fade-in">
                         <div class="evaluation-avatar">👧</div>
                         <div class="evaluation-text">${evaluation}</div>
                     </div>
                 `;
+            } else {
+                // 没有评价内容时隐藏
+                evaluationDiv.style.display = 'none';
             }
         }
     } catch (error) {
@@ -154,7 +159,7 @@ document.getElementById('refresh-today-btn').addEventListener('click', () => {
     evaluationDiv.innerHTML = `
         <div class="evaluation-loading">
             <div class="loading-heart">♡</div>
-            <span>萌妹酱正在思考...</span>
+            <span>正在思考...</span>
         </div>
     `;
     loadTodaySummary();

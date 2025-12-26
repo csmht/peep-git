@@ -330,3 +330,35 @@ code {
         padding: 20px;
     }
 }
+
+/* ========== 角色装饰图片 ========== */
+.character-decoration {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+.mascot-img {
+    width: auto;
+    height: auto;
+    max-width: 200px;
+    max-height: 300px;
+    object-fit: contain;
+    filter: drop-shadow(0 5px 15px rgba(255, 105, 180, 0.3));
+    animation: float 3s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+    .character-decoration {
+        bottom: 60px;
+        right: 10px;
+    }
+
+    .mascot-img {
+        max-width: 120px;
+        max-height: 180px;
+    }
+}
