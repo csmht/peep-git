@@ -23,6 +23,15 @@
     "auto_refresh": true,
     "refresh_interval": 30,
     "enable_trends": true,
-    "enable_export": true
+    "enable_export": true,
+    "enable_ai_evaluation": true
+  },
+  "ai": {
+    "enabled": false,
+    "api_key": "",
+    "api_url": "https://api.openai.com/v1/chat/completions",
+    "model": "gpt-4o-mini",
+    "max_tokens": 500,
+    "temperature": 0.8
   }
 }

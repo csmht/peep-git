@@ -1,5 +1,205 @@
 /* ========== PEEP GIT - 仪表盘样式 ========== */
 
+/* ========== 今日统计卡片 ========== */
+.today-summary-card {
+    background: linear-gradient(135deg, #FFE4E1 0%, #FFC0CB 50%, #FFB6C1 100%);
+    border-radius: 25px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow:
+        0 10px 30px rgba(255, 105, 180, 0.3),
+        inset 0 0 40px rgba(255, 255, 255, 0.3);
+    border: 4px double rgba(255, 255, 255, 0.6);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 装饰性背景元素 */
+.today-summary-card::before {
+    content: '✦';
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    font-size: 28px;
+    color: rgba(255, 255, 255, 0.4);
+    animation: cute-spin 8s linear infinite;
+}
+
+.today-summary-card::after {
+    content: '✦';
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    font-size: 28px;
+    color: rgba(255, 255, 255, 0.4);
+    animation: cute-spin 8s linear infinite reverse;
+}
+
+.today-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.today-title {
+    font-size: 2rem;
+    color: #FF1493;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+    margin: 0;
+}
+
+.btn-icon-only {
+    background: rgba(255, 255, 255, 0.8);
+    border: 3px double #FF69B4;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.btn-icon-only:hover {
+    background: white;
+    transform: rotate(180deg) scale(1.1);
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+}
+
+.today-stats {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 1;
+}
+
+.today-stat {
+    text-align: center;
+}
+
+.today-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.today-stat:nth-child(2) .today-icon {
+    animation-delay: 1.5s;
+}
+
+.today-count {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #FF1493;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.today-label {
+    font-size: 1rem;
+    color: #FFF;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(255, 105, 180, 0.3);
+}
+
+/* AI评价区域 */
+.ai-evaluation {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 20px;
+    border: 3px dashed #FFB6C1;
+    position: relative;
+    z-index: 1;
+}
+
+.evaluation-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    color: #FF69B4;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.loading-heart {
+    font-size: 2.5rem;
+    animation: heartbeat 1s ease-in-out infinite;
+}
+
+.evaluation-content {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.evaluation-avatar {
+    font-size: 3rem;
+    flex-shrink: 0;
+    filter: drop-shadow(2px 2px 4px rgba(255, 105, 180, 0.2));
+}
+
+.evaluation-text {
+    flex: 1;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #4A4A4A;
+    background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);
+    padding: 15px 20px;
+    border-radius: 15px;
+    border-left: 4px solid #FF69B4;
+    position: relative;
+}
+
+/* 装饰性引号 */
+.evaluation-text::before {
+    content: '💭';
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    font-size: 1.5rem;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 图片自适应样式 */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 针对角色图片的自适应 */
+.character-img,
+.mascot-img,
+img[class*="character"],
+img[src*="characters"] {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+    display: inline-block;
+}
+
 /* ========== 工具栏 ========== */
 .toolbar {
     display: flex;

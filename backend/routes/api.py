@@ -3,14 +3,16 @@ Flask API 路由模块
 提供 RESTful API 端点供前端调用
 """
 
-from flask import Blueprint, jsonify, request, send_file
+from flask import Blueprint, jsonify, request, send_file, current_app
 from backend.services.statistics import StatisticsService
+from backend.services.ai_evaluator import AIEvaluator
 from backend.models.database import Database
 from backend.models.storage_manager import StorageManager
 import csv
 from io import StringIO
-from datetime import datetime
+from datetime import datetime, date
 import os
+import json
 
 # 创建 API 蓝图
 api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
@@ -442,3 +444,81 @@ def internal_error(error):
         'success': False,
         'error': '服务器内部错误'
     }), 500
+
+
+@api_bp.route('/today-summary', methods=['GET'])
+def get_today_summary():
+    """
+    获取今日活动总结
+
+    Returns:
+        今日统计信息和 AI 评价
+    """
+    try:
+        # 获取今日日期
+        today = date.today().strftime('%Y-%m-%d')
+
+        # 获取今日统计
+        db = Database()
+        activities, _ = db.get_activities(
+            page=1,
+            page_size=1000,
+            start_date=today,
+            end_date=today
+        )
+        db.close()
+
+        # 计算统计信息
+        commit_count = sum(1 for a in activities if a['activity_type'] == 'commit')
+        push_count = sum(1 for a in activities if a['activity_type'] == 'push')
+
+        today_stats = {
+            'date': today,
+            'commit_count': commit_count,
+            'push_count': push_count,
+            'total_count': len(activities)
+        }
+
+        # 获取 AI 评价
+        evaluation = None
+        ai_enabled = False
+
+        try:
+            # 读取配置
+            config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', 'config.json')
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+
+            ai_config = config.get('ai', {})
+            ai_enabled = ai_config.get('enabled', False)
+
+            if ai_enabled and config.get('features', {}).get('enable_ai_evaluation', False):
+                evaluator = AIEvaluator(ai_config)
+                evaluation = evaluator.evaluate_today(today_stats, activities)
+
+                # 如果 AI 评价失败,使用默认评价
+                if not evaluation:
+                    evaluation = evaluator.get_fallback_evaluation(today_stats)
+
+        except Exception as e:
+            # AI 评价出错时使用默认评价
+            logger = __import__('logging').getLogger(__name__)
+            logger.error(f"AI 评价失败: {str(e)}")
+            evaluator = AIEvaluator({})
+            evaluation = evaluator.get_fallback_evaluation(today_stats)
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'stats': today_stats,
+                'evaluation': evaluation,
+                'ai_enabled': ai_enabled
+            }
+        })
+
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+

@@ -7,6 +7,34 @@
 {% endblock %}
 
 {% block content %}
+<!-- 今日统计卡片 -->
+<div class="today-summary-card cute-today-card">
+    <div class="today-header">
+        <h2 class="today-title">📅 今日概览</h2>
+        <button id="refresh-today-btn" class="btn-icon-only" title="刷新今日评价">
+            🔄
+        </button>
+    </div>
+    <div class="today-stats">
+        <div class="today-stat">
+            <div class="today-icon">💝</div>
+            <div class="today-count" id="today-commits">-</div>
+            <div class="today-label">今日提交</div>
+        </div>
+        <div class="today-stat">
+            <div class="today-icon">✈️</div>
+            <div class="today-count" id="today-pushes">-</div>
+            <div class="today-label">今日推送</div>
+        </div>
+    </div>
+    <div class="ai-evaluation" id="ai-evaluation">
+        <div class="evaluation-loading">
+            <div class="loading-heart">♡</div>
+            <span>萌妹酱正在思考...</span>
+        </div>
+    </div>
+</div>
+
 <div class="toolbar cute-toolbar">
     <div class="toolbar-group">
         <label for="date-range">📅 时间范围:</label>
@@ -90,4 +118,51 @@
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+// 加载今日统计和AI评价
+async function loadTodaySummary() {
+    try {
+        const response = await fetch('/api/v1/today-summary');
+        const result = await response.json();
+
+        if (result.success) {
+            const { stats, evaluation } = result.data;
+
+            // 更新统计数字
+            document.getElementById('today-commits').textContent = stats.commit_count;
+            document.getElementById('today-pushes').textContent = stats.push_count;
+
+            // 更新AI评价
+            const evaluationDiv = document.getElementById('ai-evaluation');
+            if (evaluation) {
+                evaluationDiv.innerHTML = `
+                    <div class="evaluation-content fade-in">
+                        <div class="evaluation-avatar">👧</div>
+                        <div class="evaluation-text">${evaluation}</div>
+                    </div>
+                `;
+            }
+        }
+    } catch (error) {
+        console.error('加载今日统计失败:', error);
+    }
+}
+
+// 刷新今日评价
+document.getElementById('refresh-today-btn').addEventListener('click', () => {
+    const evaluationDiv = document.getElementById('ai-evaluation');
+    evaluationDiv.innerHTML = `
+        <div class="evaluation-loading">
+            <div class="loading-heart">♡</div>
+            <span>萌妹酱正在思考...</span>
+        </div>
+    `;
+    loadTodaySummary();
+});
+
+// 页面加载时获取今日统计
+document.addEventListener('DOMContentLoaded', () => {
+    loadTodaySummary();
+});
+</script>
 {% endblock %}
