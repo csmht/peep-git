@@ -44,6 +44,11 @@
     z-index: 1;
 }
 
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
 .today-title {
     font-size: 2rem;
     color: #FF1493;
@@ -98,17 +103,19 @@
 .today-count {
     font-size: 3rem;
     font-weight: bold;
-    color: #FF1493;
-    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+    color: #8B0A1C;
+    text-shadow:
+        2px 2px 4px rgba(255, 255, 255, 0.8),
+        0 0 10px rgba(255, 255, 255, 0.5);
     line-height: 1;
     margin-bottom: 8px;
 }
 
 .today-label {
     font-size: 1rem;
-    color: #FFF;
+    color: #5C0A14;
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(255, 105, 180, 0.3);
+    text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.6);
 }
 
 /* AI评价区域 */
@@ -149,6 +156,15 @@
     filter: drop-shadow(2px 2px 4px rgba(255, 105, 180, 0.2));
 }
 
+.evaluation-avatar-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(2px 2px 8px rgba(255, 105, 180, 0.3));
+    animation: float 3s ease-in-out infinite;
+}
+
 .evaluation-text {
     flex: 1;
     font-size: 1.05rem;
@@ -159,6 +175,32 @@
     border-radius: 15px;
     border-left: 4px solid #FF69B4;
     position: relative;
+}
+
+.evaluation-text-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.save-evaluation-btn {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #FFB6C1, #FF69B4);
+    border: none;
+    border-radius: 15px;
+    padding: 8px 16px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+}
+
+.save-evaluation-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.5);
 }
 
 /* 装饰性引号 */
@@ -602,5 +644,149 @@ img[src*="characters"] {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+    }
+}
+
+/* ========== 历史记录面板 ========== */
+.history-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100%;
+    background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);
+    box-shadow: -5px 0 20px rgba(255, 105, 180, 0.3);
+    z-index: 1000;
+    transition: right 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: flex;
+    flex-direction: column;
+}
+
+.history-panel.show {
+    right: 0;
+}
+
+.history-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 3px dashed #FFB6C1;
+}
+
+.history-header h3 {
+    margin: 0;
+    color: #FF1493;
+    font-size: 1.5rem;
+}
+
+.close-history-btn {
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid #FF69B4;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #FF69B4;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-history-btn:hover {
+    background: #FF69B4;
+    color: white;
+    transform: rotate(90deg);
+}
+
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* 滚动条美化 */
+.history-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.history-list::-webkit-scrollbar-track {
+    background: #FFE4E1;
+    border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #FFB6C1, #FF69B4);
+    border-radius: 10px;
+}
+
+.history-item {
+    background: white;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    border-left: 4px solid #FF69B4;
+    box-shadow: 0 3px 10px rgba(255, 182, 193, 0.2);
+    position: relative;
+    transition: all 0.3s;
+}
+
+.history-item:hover {
+    transform: translateX(-5px);
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+}
+
+.history-date {
+    font-size: 0.9rem;
+    color: #FF69B4;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.history-evaluation {
+    font-size: 1rem;
+    color: #4A4A4A;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.delete-history-btn {
+    background: linear-gradient(135deg, #FFB6C1, #DDA0DD);
+    border: none;
+    border-radius: 10px;
+    padding: 5px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    float: right;
+}
+
+.delete-history-btn:hover {
+    background: linear-gradient(135deg, #FF69B4, #FF1493);
+    transform: scale(1.05);
+}
+
+.no-history {
+    text-align: center;
+    color: #FF69B4;
+    padding: 40px 20px;
+    font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    .history-panel {
+        width: 100%;
+        right: -100%;
     }
 }

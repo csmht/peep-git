@@ -13,6 +13,10 @@ from io import StringIO
 from datetime import datetime, date
 import os
 import json
+import logging
+
+# 创建 logger
+logger = logging.getLogger(__name__)
 
 # 创建 API 蓝图
 api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
@@ -457,20 +461,23 @@ def get_today_summary():
     try:
         # 获取今日日期
         today = date.today().strftime('%Y-%m-%d')
+        print(f"[DEBUG API] Today is: {today}")
 
         # 获取今日统计
         db = Database()
-        activities, _ = db.get_activities(
+        activities, total = db.get_activities(
             page=1,
             page_size=1000,
             start_date=today,
             end_date=today
         )
+        logger.info(f"Today summary query: date={today}, found {total} activities")
         db.close()
 
         # 计算统计信息
         commit_count = sum(1 for a in activities if a['activity_type'] == 'commit')
         push_count = sum(1 for a in activities if a['activity_type'] == 'push')
+        logger.info(f"Today stats: commits={commit_count}, pushes={push_count}")
 
         today_stats = {
             'date': today,
@@ -479,7 +486,7 @@ def get_today_summary():
             'total_count': len(activities)
         }
 
-        # 获取 AI 评价
+        # 获取评价
         evaluation = None
         ai_enabled = False
 
@@ -491,19 +498,24 @@ def get_today_summary():
 
             ai_config = config.get('ai', {})
             ai_enabled = ai_config.get('enabled', False)
+            feature_enabled = config.get('features', {}).get('enable_ai_evaluation', False)
 
-            if ai_enabled and config.get('features', {}).get('enable_ai_evaluation', False):
+            # 如果 AI 功能启用且 AI 已配置
+            if feature_enabled and ai_enabled:
                 evaluator = AIEvaluator(ai_config)
                 evaluation = evaluator.evaluate_today(today_stats, activities)
 
                 # 如果 AI 评价失败,使用默认评价
                 if not evaluation:
                     evaluation = evaluator.get_fallback_evaluation(today_stats)
+            elif feature_enabled:
+                # 功能启用但 AI 未配置,使用默认评价
+                evaluator = AIEvaluator({})
+                evaluation = evaluator.get_fallback_evaluation(today_stats)
 
         except Exception as e:
-            # AI 评价出错时使用默认评价
-            logger = __import__('logging').getLogger(__name__)
-            logger.error(f"AI 评价失败: {str(e)}")
+            # 出错时使用默认评价
+            logger.error(f"评价生成失败: {str(e)}")
             evaluator = AIEvaluator({})
             evaluation = evaluator.get_fallback_evaluation(today_stats)
 

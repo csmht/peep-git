@@ -27,10 +27,10 @@
     "enable_ai_evaluation": true
   },
   "ai": {
-    "enabled": false,
-    "api_key": "",
-    "api_url": "https://api.openai.com/v1/chat/completions",
-    "model": "gpt-4o-mini",
+    "enabled": true,
+    "api_key": "sk-b44397e8726d4e59afaebf7694f7d237",
+    "api_url": "https://api.deepseek.com/v1/chat/completions",
+    "model": "deepseek-chat",
     "max_tokens": 500,
     "temperature": 0.8
   }

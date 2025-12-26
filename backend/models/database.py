@@ -195,11 +195,11 @@ class Database:
             params.append(repo_path)
 
         if start_date:
-            conditions.append('timestamp >= ?')
+            conditions.append('DATE(timestamp) >= ?')
             params.append(start_date)
 
         if end_date:
-            conditions.append('timestamp <= ?')
+            conditions.append('DATE(timestamp) <= ?')
             params.append(end_date)
 
         where_clause = ' AND '.join(conditions) if conditions else '1=1'
@@ -209,6 +209,9 @@ class Database:
         count_query = f'SELECT COUNT(*) FROM git_activities WHERE {where_clause}'
         cursor.execute(count_query, params)
         total = cursor.fetchone()[0]
+
+        # 调试输出
+        print(f"[DEBUG] get_activities: where_clause={where_clause}, params={params}, total={total}")
 
         # 查询分页数据
         offset = (page - 1) * page_size
@@ -268,11 +271,11 @@ class Database:
         params = []
 
         if start_date:
-            conditions.append('timestamp >= ?')
+            conditions.append('DATE(timestamp) >= ?')
             params.append(start_date)
 
         if end_date:
-            conditions.append('timestamp <= ?')
+            conditions.append('DATE(timestamp) <= ?')
             params.append(end_date)
 
         if repo_path:

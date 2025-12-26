@@ -11,9 +11,14 @@
 <div class="today-summary-card cute-today-card">
     <div class="today-header">
         <h2 class="today-title">📅 今日概览</h2>
-        <button id="refresh-today-btn" class="btn-icon-only" title="刷新今日评价">
-            🔄
-        </button>
+        <div class="header-actions">
+            <button id="view-history-btn" class="btn-icon-only" title="查看历史记录" onclick="toggleHistory()">
+                📖
+            </button>
+            <button id="refresh-today-btn" class="btn-icon-only" title="刷新今日评价">
+                🔄
+            </button>
+        </div>
     </div>
     <div class="today-stats">
         <div class="today-stat">
@@ -31,6 +36,19 @@
         <div class="evaluation-loading">
             <div class="loading-heart">♡</div>
             <span>正在思考...</span>
+        </div>
+    </div>
+</div>
+
+<!-- 历史记录面板 -->
+<div id="history-panel" class="history-panel">
+    <div class="history-content">
+        <div class="history-header">
+            <h3>📚 历史评价</h3>
+            <button class="close-history-btn" onclick="toggleHistory()">✕</button>
+        </div>
+        <div id="evaluation-history" class="history-list">
+            <p class="no-history">加载中...</p>
         </div>
     </div>
 </div>
@@ -125,8 +143,14 @@ async function loadTodaySummary() {
         const response = await fetch('/api/v1/today-summary');
         const result = await response.json();
 
+        console.log('[DEBUG] API 响应:', result);
+
         if (result.success) {
             const { stats, evaluation } = result.data;
+
+            console.log('[DEBUG] stats:', stats);
+            console.log('[DEBUG] commit_count:', stats.commit_count);
+            console.log('[DEBUG] push_count:', stats.push_count);
 
             // 更新统计数字
             document.getElementById('today-commits').textContent = stats.commit_count;
@@ -139,8 +163,13 @@ async function loadTodaySummary() {
                 evaluationDiv.style.display = 'block';
                 evaluationDiv.innerHTML = `
                     <div class="evaluation-content fade-in">
-                        <div class="evaluation-avatar">👧</div>
-                        <div class="evaluation-text">${evaluation}</div>
+                        <img src="/static/images/characters/mascot.png" alt="角色" class="evaluation-avatar-img">
+                        <div class="evaluation-text-wrapper">
+                            <div class="evaluation-text">${evaluation}</div>
+                            <button class="save-evaluation-btn" onclick="saveEvaluation('${evaluation.replace(/'/g, "\\'")}')">
+                                💾 记录评价
+                            </button>
+                        </div>
                     </div>
                 `;
             } else {
@@ -168,6 +197,78 @@ document.getElementById('refresh-today-btn').addEventListener('click', () => {
 // 页面加载时获取今日统计
 document.addEventListener('DOMContentLoaded', () => {
     loadTodaySummary();
+    loadSavedEvaluations();
 });
+
+// 保存评价到本地存储
+function saveEvaluation(evaluationText) {
+    const today = new Date().toLocaleDateString('zh-CN');
+    const saved = JSON.parse(localStorage.getItem('gitsee_evaluations') || '[]');
+
+    // 检查今天是否已经保存过
+    const existingIndex = saved.findIndex(item => item.date === today);
+    if (existingIndex >= 0) {
+        if (!confirm('今天已经记录过评价了,是否覆盖?')) {
+            return;
+        }
+        saved[existingIndex] = {
+            date: today,
+            evaluation: evaluationText,
+            timestamp: new Date().toISOString()
+        };
+    } else {
+        saved.push({
+            date: today,
+            evaluation: evaluationText,
+            timestamp: new Date().toISOString()
+        });
+    }
+
+    localStorage.setItem('gitsee_evaluations', JSON.stringify(saved));
+    alert('评价已记录~ 💖');
+
+    // 刷新历史记录列表
+    loadSavedEvaluations();
+}
+
+// 加载保存的评价列表
+function loadSavedEvaluations() {
+    const saved = JSON.parse(localStorage.getItem('gitsee_evaluations') || '[]');
+    const historyContainer = document.getElementById('evaluation-history');
+
+    if (saved.length === 0) {
+        historyContainer.innerHTML = '<p class="no-history">暂无历史记录~</p>';
+        return;
+    }
+
+    // 按时间倒序排列
+    saved.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    historyContainer.innerHTML = saved.map((item, index) => `
+        <div class="history-item">
+            <div class="history-date">${item.date}</div>
+            <div class="history-evaluation">${item.evaluation}</div>
+            <button class="delete-history-btn" onclick="deleteEvaluation(${index})">🗑️ 删除</button>
+        </div>
+    `).join('');
+}
+
+// 删除保存的评价
+function deleteEvaluation(index) {
+    if (!confirm('确定要删除这条记录吗?')) {
+        return;
+    }
+
+    const saved = JSON.parse(localStorage.getItem('gitsee_evaluations') || '[]');
+    saved.splice(index, 1);
+    localStorage.setItem('gitsee_evaluations', JSON.stringify(saved));
+    loadSavedEvaluations();
+}
+
+// 切换历史记录面板显示
+function toggleHistory() {
+    const panel = document.getElementById('history-panel');
+    panel.classList.toggle('show');
+}
 </script>
 {% endblock %}
