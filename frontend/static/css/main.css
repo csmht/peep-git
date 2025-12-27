@@ -48,10 +48,17 @@ body::before {
     color: white;
     margin-bottom: 30px;
     position: relative;
+    padding: 30px 20px;
+    background: url('../images/characters/banner-bg.png') center top no-repeat;
+    background-size: cover;
+    border-radius: 20px;
+    margin-top: 20px;
 }
 
 .logo-wrapper {
     display: inline-block;
+    position: relative;
+    z-index: 1;
 }
 
 .cute-title {
