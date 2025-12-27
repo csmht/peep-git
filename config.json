@@ -27,8 +27,8 @@
     "enable_ai_evaluation": true
   },
   "ai": {
-    "enabled": true,
-    "api_key": "sk-b44397e8726d4e59afaebf7694f7d237",
+    "enabled": false,
+    "api_key": "",
     "api_url": "https://api.deepseek.com/v1/chat/completions",
     "model": "deepseek-chat",
     "max_tokens": 500,
