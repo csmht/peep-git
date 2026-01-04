@@ -18,6 +18,9 @@
             <button id="refresh-today-btn" class="btn-icon-only" title="刷新今日评价">
                 🔄
             </button>
+            <button id="clear-cache-btn" class="btn-icon-only" title="清除评价缓存">
+                🗑️
+            </button>
         </div>
     </div>
     <div class="today-stats">
@@ -199,6 +202,44 @@ document.getElementById('refresh-today-btn').addEventListener('click', () => {
         </div>
     `;
     loadTodaySummary(true);  // 传入 true 强制刷新
+});
+
+// 清除评价缓存按钮
+document.getElementById('clear-cache-btn').addEventListener('click', async () => {
+    if (!confirm('确定要清除评价缓存吗?\n清除后会重新生成 AI 评价。')) {
+        return;
+    }
+
+    const evaluationDiv = document.getElementById('ai-evaluation');
+    evaluationDiv.innerHTML = `
+        <div class="evaluation-loading">
+            <img src="/static/images/characters/loading.png" alt="清除中" class="loading-heart-img">
+            <span>正在清除缓存...</span>
+        </div>
+    `;
+
+    try {
+        // 调用清除缓存接口
+        const response = await fetch('/api/v1/clear-evaluation-cache', {
+            method: 'POST'
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('缓存已清除! ✨\n即将重新生成评价...');
+            // 清除后重新加载评价
+            loadTodaySummary(true);
+        } else {
+            alert('清除失败: ' + (result.error || '未知错误'));
+            // 恢复显示
+            loadTodaySummary();
+        }
+    } catch (error) {
+        console.error('清除缓存失败:', error);
+        alert('清除缓存失败: ' + error.message);
+        loadTodaySummary();
+    }
 });
 
 // 页面加载时获取今日统计

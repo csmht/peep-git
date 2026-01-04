@@ -432,6 +432,39 @@ def health_check():
         }), 500
 
 
+@api_bp.route('/clear-evaluation-cache', methods=['POST'])
+def clear_evaluation_cache():
+    """
+    清除 AI 评价缓存
+
+    Returns:
+        清除结果
+    """
+    try:
+        from backend.services.ai_evaluator import AIEvaluator
+
+        # 创建 evaluator 实例并清除缓存
+        evaluator = AIEvaluator({})
+        success = evaluator.clear_cache()
+
+        if success:
+            return jsonify({
+                'success': True,
+                'message': '缓存已清除'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '缓存文件不存在或清除失败'
+            }), 500
+
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
 @api_bp.errorhandler(404)
 def not_found(error):
     """处理 404 错误"""
@@ -489,6 +522,14 @@ def get_today_summary():
         ai_enabled = False
         force_refresh = request.args.get('force_refresh', 'false').lower() == 'true'
 
+        # 创建 evaluator 实例(即使 AI 未启用也要处理缓存)
+        evaluator = AIEvaluator({})
+
+        # 如果强制刷新,先清除缓存
+        if force_refresh:
+            evaluator.clear_cache()
+            logger.info(f"强制刷新,已清除缓存")
+
         try:
             # 读取配置
             config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', 'config.json')
@@ -503,36 +544,34 @@ def get_today_summary():
             if feature_enabled and ai_enabled:
                 evaluator = AIEvaluator(ai_config)
 
-                # 如果强制刷新,清除缓存
-                if force_refresh:
-                    evaluator.clear_cache()
-                    logger.info(f"强制刷新,已清除缓存")
+        except Exception as e:
+            # 配置文件读取失败,记录日志但继续执行
+            logger.warning(f"配置文件读取失败: {str(e)}, 使用默认评价")
 
-                # 尝试从缓存获取评价
-                evaluation = evaluator.get_cached_evaluation(today_stats)
+        # 无论 AI 是否启用,都检查缓存
+        cached_eval = evaluator.get_cached_evaluation(today_stats)
 
-                # 如果缓存不存在或数量不匹配,重新生成
-                if not evaluation:
-                    logger.info(f"缓存未命中或数量变化,重新生成 AI 评价")
-                    evaluation = evaluator.evaluate_today(today_stats, activities)
-
-                    # 如果 AI 评价成功,保存到缓存
-                    if evaluation:
-                        evaluator.save_evaluation_to_cache(today_stats, evaluation)
+        if cached_eval and not force_refresh:
+            # 缓存命中,使用缓存的评价
+            evaluation = cached_eval
+            logger.info(f"使用缓存的评价")
+        else:
+            # 缓存未命中或强制刷新,生成新评价
+            if ai_enabled:
+                # AI 已启用,尝试调用 AI API
+                logger.info(f"缓存未命中或数量变化,重新生成 AI 评价")
+                evaluation = evaluator.evaluate_today(today_stats, activities)
 
                 # 如果 AI 评价失败,使用默认评价
                 if not evaluation:
                     evaluation = evaluator.get_fallback_evaluation(today_stats)
-            elif feature_enabled:
-                # 功能启用但 AI 未配置,使用默认评价
-                evaluator = AIEvaluator({})
+            else:
+                # AI 未启用,使用默认评价
                 evaluation = evaluator.get_fallback_evaluation(today_stats)
 
-        except Exception as e:
-            # 出错时使用默认评价
-            logger.error(f"评价生成失败: {str(e)}")
-            evaluator = AIEvaluator({})
-            evaluation = evaluator.get_fallback_evaluation(today_stats)
+            # 保存到缓存
+            if evaluation:
+                evaluator.save_evaluation_to_cache(today_stats, evaluation)
 
         return jsonify({
             'success': True,

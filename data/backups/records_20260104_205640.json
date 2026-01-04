@@ -1,7 +1,67 @@
 {
   "version": "1.0",
-  "last_updated": "2026-01-04T20:29:31.370734",
+  "last_updated": "2026-01-04T20:56:40.162757",
   "activities": [
+    {
+      "id": 61,
+      "activity_type": "push",
+      "timestamp": "2026-01-04T20:40:23.946238",
+      "repo_path": "C:/Users/Liang/Desktop/Work/gitSee",
+      "branch_name": "main",
+      "commit_hash": "4c6922da23f7c9050273a5636bcbf43a14d28979",
+      "commit_message": "",
+      "author_name": "",
+      "author_email": "",
+      "files_changed": 0,
+      "insertions": 0,
+      "deletions": 0,
+      "created_at": "2026-01-04 12:40:23"
+    },
+    {
+      "id": 60,
+      "activity_type": "commit",
+      "timestamp": "2026-01-04T20:40:16.137759",
+      "repo_path": "C:/Users/Liang/Desktop/Work/gitSee",
+      "branch_name": "HEAD",
+      "commit_hash": "4c6922da23f7c9050273a5636bcbf43a14d28979",
+      "commit_message": "Feat: 优化仓库列表统计和AI评价缓存机制\n\n- 仓库列表接口现在会实时更新每个仓库的统计数据\n- 按总活动数(提交数+推送数)降序排列仓库\n- 确保前端显示准确的提交和推送次数\n\n- 新增本地文件缓存方案,避免重复调用AI API\n- 缓存文件位置: data/cache/ai_evaluation_cache.json\n- 缓存验证机制:\n  - 检查日期是否匹配(每天自动失效)\n  - 检查提交和推送数量是否匹配(数量变化时重新生成)\n- 只有数量变化时才重新请求AI评价,提升性能\n\n- backend/routes/api.py: 集成缓存逻辑到今日概况接口\n- backend/routes/repo_management.py: 优化仓库列表统计和排序\n- backend/services/ai_evaluator.py: 新增缓存读取和保存方法\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>",
+      "author_name": "csmht",
+      "author_email": "3299524971@qq.com",
+      "files_changed": 4,
+      "insertions": 118,
+      "deletions": 39,
+      "created_at": "2026-01-04 12:40:16"
+    },
+    {
+      "id": 59,
+      "activity_type": "push",
+      "timestamp": "2026-01-04T20:38:22.635336",
+      "repo_path": "C:/Users/Liang/Desktop/Work/gitSee",
+      "branch_name": "main",
+      "commit_hash": "f8f42837c6129aa1d52b61e430768a7af8077d57",
+      "commit_message": "",
+      "author_name": "",
+      "author_email": "",
+      "files_changed": 0,
+      "insertions": 0,
+      "deletions": 0,
+      "created_at": "2026-01-04 12:38:22"
+    },
+    {
+      "id": 58,
+      "activity_type": "commit",
+      "timestamp": "2026-01-04T20:37:50.082328",
+      "repo_path": "C:/Users/Liang/Desktop/Work/gitSee",
+      "branch_name": "main",
+      "commit_hash": "f8f42837c6129aa1d52b61e430768a7af8077d57",
+      "commit_message": "Feat: 优化仓库列表统计和AI评价缓存机制\n\n## 主要改动\n\n### 1. 修复仓库列表提交次数统计和排序\n- 仓库列表接口现在会实时更新每个仓库的统计数据\n- 按总活动数(提交数+推送数)降序排列仓库\n- 确保前端显示准确的提交和推送次数\n\n### 2. 实现AI评价缓存机制\n- 新增本地文件缓存方案,避免重复调用AI API\n- 缓存文件位置: data/cache/ai_evaluation_cache.json\n- 缓存验证机制:\n  - 检查日期是否匹配(每天自动失效)\n  - 检查提交和推送数量是否匹配(数量变化时重新生成)\n- 只有数量变化时才重新请求AI评价,提升性能\n\n## 修改文件\n- backend/routes/api.py: 集成缓存逻辑到今日概况接口\n- backend/routes/repo_management.py: 优化仓库列表统计和排序\n- backend/services/ai_evaluator.py: 新增缓存读取和保存方法\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>",
+      "author_name": "csmht",
+      "author_email": "3299524971@qq.com",
+      "files_changed": 4,
+      "insertions": 118,
+      "deletions": 39,
+      "created_at": "2026-01-04 12:37:50"
+    },
     {
       "id": 57,
       "activity_type": "push",
@@ -859,9 +919,9 @@
     }
   ],
   "statistics": {
-    "total_commits": 41,
-    "total_pushes": 16,
+    "total_commits": 43,
+    "total_pushes": 18,
     "most_active_repo": "C:/Users/Liang/Desktop/signLab1",
-    "most_active_branch": "master"
+    "most_active_branch": "main"
   }
 }

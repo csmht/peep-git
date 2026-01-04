@@ -1,0 +1,37 @@
+{
+  "app": {
+    "host": "0.0.0.0",
+    "port": 5000,
+    "debug": false
+  },
+  "database": {
+    "path": "data/gitsee.db",
+    "backup_enabled": true,
+    "backup_interval": 86400
+  },
+  "json_storage": {
+    "path": "data/records.json",
+    "auto_sync": true,
+    "sync_interval": 300
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/app.log",
+    "max_size": "10MB"
+  },
+  "features": {
+    "auto_refresh": true,
+    "refresh_interval": 30,
+    "enable_trends": true,
+    "enable_export": true,
+    "enable_ai_evaluation": true
+  },
+  "ai": {
+    "enabled": true,
+    "api_key": "sk-b44397e8726d4e59afaebf7694f7d237",
+    "api_url": "https://api.deepseek.com",
+    "model": "deepseek-chat",
+    "max_tokens": 500,
+    "temperature": 0.8
+  }
+}

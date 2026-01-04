@@ -1,7 +1,37 @@
 {
   "version": "1.0",
-  "last_updated": "2026-01-04T20:41:40.140350",
+  "last_updated": "2026-01-04T21:10:07.134370",
   "activities": [
+    {
+      "id": 63,
+      "activity_type": "push",
+      "timestamp": "2026-01-04T20:58:27.614013",
+      "repo_path": "C:/Users/Liang/Desktop/Work/gitSee",
+      "branch_name": "main",
+      "commit_hash": "625ed565b90ba226fa05576289a38f3089812140",
+      "commit_message": "",
+      "author_name": "",
+      "author_email": "",
+      "files_changed": 0,
+      "insertions": 0,
+      "deletions": 0,
+      "created_at": "2026-01-04 12:58:27"
+    },
+    {
+      "id": 62,
+      "activity_type": "commit",
+      "timestamp": "2026-01-04T20:58:21.562298",
+      "repo_path": "C:/Users/Liang/Desktop/Work/gitSee",
+      "branch_name": "main",
+      "commit_hash": "625ed565b90ba226fa05576289a38f3089812140",
+      "commit_message": "Fix: 修复仓库统计更新和AI评价缓存刷新问题\n\n## 主要修复\n\n### 1. 修复仓库统计更新问题\n- 修改 `update_repo_stats()` 方法,无论是否有活动记录都更新统计\n- 确保没有活动记录的仓库也能正确显示 0 次提交和推送\n- 修复仓库列表页面提交/推送数量显示不准确的问题\n\n### 2. 实现强制刷新AI评价功能\n- 在 `AIEvaluator` 类中新增 `clear_cache()` 方法\n- `/api/v1/today-summary` 接口支持 `force_refresh` 参数\n- 前端刷新按钮点击时强制清除缓存并重新生成评价\n- 解决推送/提交数量变化后缓存未刷新的问题\n\n### 3. 优化前端刷新逻辑\n- `loadTodaySummary()` 函数支持 `forceRefresh` 参数\n- 刷新按钮调用时传入 `true` 强制刷新\n- 首次加载时正常使用缓存机制\n\n## 修改文件\n- backend/models/database.py: 修复统计更新逻辑\n- backend/routes/api.py: 支持强制刷新参数\n- backend/services/ai_evaluator.py: 新增清除缓存方法\n- frontend/templates/dashboard.html: 优化刷新按钮功能\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>",
+      "author_name": "csmht",
+      "author_email": "3299524971@qq.com",
+      "files_changed": 20,
+      "insertions": 6066,
+      "deletions": 1145,
+      "created_at": "2026-01-04 12:58:21"
+    },
     {
       "id": 61,
       "activity_type": "push",
@@ -919,8 +949,8 @@
     }
   ],
   "statistics": {
-    "total_commits": 43,
-    "total_pushes": 18,
+    "total_commits": 44,
+    "total_pushes": 19,
     "most_active_repo": "C:/Users/Liang/Desktop/signLab1",
     "most_active_branch": "main"
   }
