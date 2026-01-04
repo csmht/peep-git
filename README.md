@@ -373,7 +373,16 @@ POST /api/v1/repos/batch-add
 
 ## 配置文件
 
-配置文件位于 `config.json`:
+配置文件位于项目根目录的 `config.json`。首次使用时,请复制 `config.example.json` 并根据需要修改配置。
+
+### 配置文件模板
+
+```bash
+# 复制配置模板
+cp config.example.json config.json
+```
+
+### 完整配置说明
 
 ```json
 {
@@ -387,14 +396,139 @@ POST /api/v1/repos/batch-add
     "backup_enabled": true,
     "backup_interval": 86400
   },
+  "json_storage": {
+    "path": "data/records.json",
+    "auto_sync": true,
+    "sync_interval": 300
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/app.log",
+    "max_size": "10MB"
+  },
   "features": {
     "auto_refresh": true,
     "refresh_interval": 30,
     "enable_trends": true,
-    "enable_export": true
+    "enable_export": true,
+    "enable_ai_evaluation": true
+  },
+  "ai": {
+    "enabled": true,
+    "api_key": "your-api-key-here",
+    "api_url": "https://api.openai.com/v1/chat/completions",
+    "model": "gpt-4o-mini",
+    "max_tokens": 500,
+    "temperature": 0.8
   }
 }
 ```
+
+### 配置项说明
+
+#### 应用配置 (app)
+
+- `host`: 监听地址,默认 `0.0.0.0`(监听所有网络接口)
+- `port`: Web 服务端口,默认 `5000`
+- `debug`: 调试模式,生产环境建议设为 `false`
+
+#### 数据库配置 (database)
+
+- `path`: SQLite 数据库文件路径
+- `backup_enabled`: 是否启用自动备份
+- `backup_interval`: 备份间隔(秒),默认 `86400`(24小时)
+
+#### JSON 存储配置 (json_storage)
+
+- `path`: JSON 备份文件路径
+- `auto_sync`: 是否自动同步数据库到 JSON
+- `sync_interval`: 同步间隔(秒)
+
+#### 日志配置 (logging)
+
+- `level`: 日志级别(DEBUG/INFO/WARNING/ERROR)
+- `file`: 日志文件路径
+- `max_size`: 日志文件最大大小
+
+#### 功能开关 (features)
+
+- `auto_refresh`: 是否启用自动刷新
+- `refresh_interval`: 刷新间隔(秒)
+- `enable_trends`: 是否启用趋势图表
+- `enable_export`: 是否启用数据导出
+- `enable_ai_evaluation`: 是否启用 AI 评价功能
+
+#### AI 评价配置 (ai)
+
+- `enabled`: 是否启用 AI 评价(需要 `features.enable_ai_evaluation` 同时为 `true`)
+- `api_key`: AI 服务 API 密钥
+- `api_url`: AI API 端点 URL
+- `model`: 使用的模型名称
+- `max_tokens`: 最大生成令牌数
+- `temperature`: 生成温度(0.0-1.0,越高越随机)
+
+### AI 服务配置示例
+
+#### OpenAI 配置
+
+```json
+"ai": {
+  "enabled": true,
+  "api_key": "sk-your-openai-api-key",
+  "api_url": "https://api.openai.com/v1/chat/completions",
+  "model": "gpt-4o-mini",
+  "max_tokens": 500,
+  "temperature": 0.8
+}
+```
+
+#### DeepSeek 配置
+
+```json
+"ai": {
+  "enabled": true,
+  "api_key": "sk-your-deepseek-api-key",
+  "api_url": "https://api.deepseek.com/v1/chat/completions",
+  "model": "deepseek-chat",
+  "max_tokens": 500,
+  "temperature": 0.8
+}
+```
+
+#### 其他兼容 OpenAI API 的服务
+
+只要服务兼容 OpenAI API 格式,都可以配置使用:
+
+```json
+"ai": {
+  "enabled": true,
+  "api_key": "your-api-key",
+  "api_url": "https://your-api-endpoint/v1/chat/completions",
+  "model": "your-model-name",
+  "max_tokens": 500,
+  "temperature": 0.8
+}
+```
+
+### AI 评价缓存机制
+
+为了优化性能和减少 API 调用,系统实现了智能缓存机制:
+
+1. **首次请求**: 打开网页时,如果没有缓存,会调用 AI API 生成评价
+2. **缓存命中**: 后续访问会直接使用缓存,不会重复调用 API
+3. **数量变化**: 当提交或推送数量变化时,缓存自动失效,重新生成评价
+4. **日期过期**: 缓存有效期至当天 23:59,第二天自动失效
+5. **手动刷新**: 点击刷新按钮(🔄)会强制重新生成评价
+6. **清除缓存**: 点击清除缓存按钮(🗑️)会删除缓存文件,下次访问时重新生成
+
+### 配置文件安全
+
+**⚠️ 重要提示**:
+
+- `config.json` 包含敏感信息(API 密钥),请勿提交到 Git 仓库
+- `config.json` 已添加到 `.gitignore`,不会被 Git 跟踪
+- 团队协作时,请使用 `config.example.json` 作为模板,各自创建本地配置
+- 建议定期更换 API 密钥,确保账户安全
 
 ## 常见问题
 
