@@ -284,3 +284,19 @@ class AIEvaluator:
         except Exception as e:
             logger.error(f"保存缓存失败: {str(e)}")
             return False
+
+    def clear_cache(self) -> bool:
+        """
+        清除缓存文件
+
+        Returns:
+            是否清除成功
+        """
+        try:
+            if os.path.exists(self.cache_file):
+                os.remove(self.cache_file)
+                logger.info(f"缓存文件已删除: {self.cache_file}")
+            return True
+        except Exception as e:
+            logger.error(f"清除缓存失败: {str(e)}")
+            return False

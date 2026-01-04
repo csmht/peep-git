@@ -487,6 +487,7 @@ def get_today_summary():
         # 获取评价
         evaluation = None
         ai_enabled = False
+        force_refresh = request.args.get('force_refresh', 'false').lower() == 'true'
 
         try:
             # 读取配置
@@ -501,6 +502,12 @@ def get_today_summary():
             # 如果 AI 功能启用且 AI 已配置
             if feature_enabled and ai_enabled:
                 evaluator = AIEvaluator(ai_config)
+
+                # 如果强制刷新,清除缓存
+                if force_refresh:
+                    evaluator.clear_cache()
+                    logger.info(f"强制刷新,已清除缓存")
+
                 # 尝试从缓存获取评价
                 evaluation = evaluator.get_cached_evaluation(today_stats)
 

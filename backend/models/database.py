@@ -592,13 +592,13 @@ class Database:
 
         result = cursor.fetchone()
 
-        if result and result[0] > 0:  # 有活动记录
-            update_data = {
-                'total_commits': result[0],
-                'total_pushes': result[1],
-                'last_activity_time': last_activity_time or result[2]
-            }
-            self.update_monitored_repo(repo_path, update_data)
+        # 无论是否有活动记录,都更新统计信息(没有记录时数量为 0)
+        update_data = {
+            'total_commits': result[0] if result else 0,
+            'total_pushes': result[1] if result else 0,
+            'last_activity_time': last_activity_time or (result[2] if result else None)
+        }
+        self.update_monitored_repo(repo_path, update_data)
 
 
 if __name__ == '__main__':

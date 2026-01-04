@@ -138,9 +138,10 @@
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script>
 // 加载今日统计和AI评价
-async function loadTodaySummary() {
+async function loadTodaySummary(forceRefresh = false) {
     try {
-        const response = await fetch('/api/v1/today-summary');
+        const url = forceRefresh ? '/api/v1/today-summary?force_refresh=true' : '/api/v1/today-summary';
+        const response = await fetch(url);
         const result = await response.json();
 
         if (result.success) {
@@ -188,7 +189,7 @@ async function loadTodaySummary() {
     }
 }
 
-// 刷新今日评价
+// 刷新今日评价(强制刷新缓存)
 document.getElementById('refresh-today-btn').addEventListener('click', () => {
     const evaluationDiv = document.getElementById('ai-evaluation');
     evaluationDiv.innerHTML = `
@@ -197,7 +198,7 @@ document.getElementById('refresh-today-btn').addEventListener('click', () => {
             <span>正在思考...</span>
         </div>
     `;
-    loadTodaySummary();
+    loadTodaySummary(true);  // 传入 true 强制刷新
 });
 
 // 页面加载时获取今日统计
