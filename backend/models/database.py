@@ -580,15 +580,18 @@ class Database:
         self.connect()
         cursor = self.conn.cursor()
 
-        # 统计该仓库的提交和推送次数
+        # 标准化路径格式,将反斜杠转换为正斜杠,以便匹配 git_activities 表中的路径
+        normalized_path = repo_path.replace('\\', '/')
+
+        # 统计该仓库的提交和推送次数(使用标准化的路径进行匹配)
         cursor.execute('''
             SELECT
                 COUNT(CASE WHEN activity_type = 'commit' THEN 1 END) as commits,
                 COUNT(CASE WHEN activity_type = 'push' THEN 1 END) as pushes,
                 MAX(timestamp) as last_activity
             FROM git_activities
-            WHERE repo_path = ?
-        ''', (repo_path,))
+            WHERE REPLACE(repo_path, '\\', '/') = ?
+        ''', (normalized_path,))
 
         result = cursor.fetchone()
 
