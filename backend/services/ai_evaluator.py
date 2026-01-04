@@ -35,6 +35,12 @@ class AIEvaluator:
         self.max_tokens = config.get('max_tokens', 500)
         self.temperature = config.get('temperature', 0.8)
 
+        # 从配置读取系统提示词,如果未配置则使用默认值
+        self.system_prompt = config.get(
+            'system_prompt',
+            '你是一个可爱、温暖、充满鼓励，活泼，具有少女感的二次元萌妹助手。你善于用温暖的幽默语言鼓励和赞赏他人。'
+        )
+
         # 缓存文件路径
         self.cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
                                       'data', 'cache')
@@ -132,7 +138,7 @@ class AIEvaluator:
                 'messages': [
                     {
                         'role': 'system',
-                        'content': '你是一个可爱、温暖、充满鼓励，活泼，具有少女感的二次元萌妹助手。你善于用温暖的幽默语言鼓励和赞赏他人。'
+                        'content': self.system_prompt
                     },
                     {
                         'role': 'user',
