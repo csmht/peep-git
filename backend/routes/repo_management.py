@@ -153,13 +153,28 @@ def list_repos():
         monitored_only: 是否只返回正在监控的仓库
 
     Returns:
-        仓库列表
+        仓库列表,按总活动数(提交数+推送数)降序排列
     """
     try:
         monitored_only = request.args.get('monitored_only', 'false').lower() == 'true'
 
         db = Database()
         repos = db.get_monitored_repos(monitored_only=monitored_only)
+
+        # 更新每个仓库的统计数据
+        for repo in repos:
+            db.update_repo_stats(repo['repo_path'])
+
+        # 重新获取更新后的数据
+        repos = db.get_monitored_repos(monitored_only=monitored_only)
+
+        # 按总活动数(提交数+推送数)降序排序
+        for repo in repos:
+            repo['total_activities'] = (repo.get('total_commits', 0) +
+                                       repo.get('total_pushes', 0))
+
+        repos.sort(key=lambda x: x['total_activities'], reverse=True)
+
         db.close()
 
         return jsonify({

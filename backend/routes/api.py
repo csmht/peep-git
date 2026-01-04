@@ -501,7 +501,17 @@ def get_today_summary():
             # 如果 AI 功能启用且 AI 已配置
             if feature_enabled and ai_enabled:
                 evaluator = AIEvaluator(ai_config)
-                evaluation = evaluator.evaluate_today(today_stats, activities)
+                # 尝试从缓存获取评价
+                evaluation = evaluator.get_cached_evaluation(today_stats)
+
+                # 如果缓存不存在或数量不匹配,重新生成
+                if not evaluation:
+                    logger.info(f"缓存未命中或数量变化,重新生成 AI 评价")
+                    evaluation = evaluator.evaluate_today(today_stats, activities)
+
+                    # 如果 AI 评价成功,保存到缓存
+                    if evaluation:
+                        evaluator.save_evaluation_to_cache(today_stats, evaluation)
 
                 # 如果 AI 评价失败,使用默认评价
                 if not evaluation:

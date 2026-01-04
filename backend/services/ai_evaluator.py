@@ -11,7 +11,9 @@ except ImportError:
 
 import json
 import logging
+import os
 from typing import List, Dict, Optional
+from datetime import date
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +34,12 @@ class AIEvaluator:
         self.model = config.get('model', 'gpt-4o-mini')
         self.max_tokens = config.get('max_tokens', 500)
         self.temperature = config.get('temperature', 0.8)
+
+        # 缓存文件路径
+        self.cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+                                      'data', 'cache')
+        os.makedirs(self.cache_dir, exist_ok=True)
+        self.cache_file = os.path.join(self.cache_dir, 'ai_evaluation_cache.json')
 
         # 检查是否启用
         if not self.enabled or not self.api_key:
@@ -193,3 +201,86 @@ class AIEvaluator:
 
         else:
             return f"今天也有在努力哦! 💝 完成了 {commit_count} 次提交和 {push_count} 次推送,积少成多,坚持下去会更好! ✨ 萌妹酱为你加油! 🌟"
+
+    def get_cached_evaluation(self, today_stats: Dict) -> Optional[str]:
+        """
+        从缓存获取评价
+
+        Args:
+            today_stats: 今日统计信息
+
+        Returns:
+            缓存的评价文本,如果缓存不存在或数量不匹配则返回 None
+        """
+        try:
+            # 如果缓存文件不存在,返回 None
+            if not os.path.exists(self.cache_file):
+                return None
+
+            # 读取缓存
+            with open(self.cache_file, 'r', encoding='utf-8') as f:
+                cache = json.load(f)
+
+            # 获取今天的日期
+            today = date.today().strftime('%Y-%m-%d')
+
+            # 检查缓存中的日期是否匹配
+            if cache.get('date') != today:
+                logger.info(f"缓存日期不匹配: cache={cache.get('date')}, today={today}")
+                return None
+
+            # 检查缓存中的提交和推送数量是否匹配
+            cached_commits = cache.get('commit_count', 0)
+            cached_pushes = cache.get('push_count', 0)
+            current_commits = today_stats.get('commit_count', 0)
+            current_pushes = today_stats.get('push_count', 0)
+
+            if cached_commits != current_commits or cached_pushes != current_pushes:
+                logger.info(f"缓存数量不匹配: commits={cached_commits}->{current_commits}, "
+                          f"pushes={cached_pushes}->{current_pushes}")
+                return None
+
+            # 数量匹配,返回缓存的评价
+            logger.info(f"缓存命中,使用缓存的 AI 评价")
+            return cache.get('evaluation')
+
+        except Exception as e:
+            logger.error(f"读取缓存失败: {str(e)}")
+            return None
+
+    def save_evaluation_to_cache(self, today_stats: Dict, evaluation: str) -> bool:
+        """
+        保存评价到缓存
+
+        Args:
+            today_stats: 今日统计信息
+            evaluation: 评价文本
+
+        Returns:
+            是否保存成功
+        """
+        try:
+            # 获取今天的日期
+            today = date.today().strftime('%Y-%m-%d')
+
+            # 构建缓存数据
+            cache = {
+                'date': today,
+                'commit_count': today_stats.get('commit_count', 0),
+                'push_count': today_stats.get('push_count', 0),
+                'evaluation': evaluation,
+                'cached_at': date.today().isoformat()
+            }
+
+            # 保存到文件
+            with open(self.cache_file, 'w', encoding='utf-8') as f:
+                json.dump(cache, f, ensure_ascii=False, indent=2)
+
+            logger.info(f"AI 评价已保存到缓存: date={today}, "
+                       f"commits={today_stats.get('commit_count')}, "
+                       f"pushes={today_stats.get('push_count')}")
+            return True
+
+        except Exception as e:
+            logger.error(f"保存缓存失败: {str(e)}")
+            return False
