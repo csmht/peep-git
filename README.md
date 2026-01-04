@@ -419,7 +419,8 @@ cp config.example.json config.json
     "api_url": "https://api.openai.com/v1/chat/completions",
     "model": "gpt-4o-mini",
     "max_tokens": 500,
-    "temperature": 0.8
+    "temperature": 0.8,
+    "system_prompt": "你是一个可爱、温暖、充满鼓励的二次元萌妹助手。"
   }
 }
 ```
@@ -466,6 +467,7 @@ cp config.example.json config.json
 - `model`: 使用的模型名称
 - `max_tokens`: 最大生成令牌数
 - `temperature`: 生成温度(0.0-1.0,越高越随机)
+- `system_prompt`: AI 助手的系统提示词,用于定义 AI 的性格和回复风格(可选,未配置时使用默认值)
 
 ### AI 服务配置示例
 
@@ -478,7 +480,8 @@ cp config.example.json config.json
   "api_url": "https://api.openai.com/v1/chat/completions",
   "model": "gpt-4o-mini",
   "max_tokens": 500,
-  "temperature": 0.8
+  "temperature": 0.8,
+  "system_prompt": "你是一个可爱、温暖、充满鼓励的二次元萌妹助手。"
 }
 ```
 
@@ -491,7 +494,8 @@ cp config.example.json config.json
   "api_url": "https://api.deepseek.com/v1/chat/completions",
   "model": "deepseek-chat",
   "max_tokens": 500,
-  "temperature": 0.8
+  "temperature": 0.8,
+  "system_prompt": "你是一个可爱、温暖、充满鼓励，活泼，具有少女感的二次元萌妹助手。你必须用幽默的比喻或者段子，温暖的语言鼓励和赞赏他人。"
 }
 ```
 
@@ -506,9 +510,22 @@ cp config.example.json config.json
   "api_url": "https://your-api-endpoint/v1/chat/completions",
   "model": "your-model-name",
   "max_tokens": 500,
-  "temperature": 0.8
+  "temperature": 0.8,
+  "system_prompt": "你想要的系统提示词内容"
 }
 ```
+
+#### 自定义 AI 助手性格
+
+通过修改 `system_prompt` 配置项,你可以完全自定义 AI 助手的性格和回复风格:
+
+```json
+"ai": {
+  "system_prompt": "你是一个专业的代码审查助手,语气严谨但友善。"
+}
+```
+
+**提示**: 修改 `system_prompt` 后需重启服务器才能生效。点击清除缓存按钮(🗑️)可以立即看到效果。
 
 ### AI 评价缓存机制
 
