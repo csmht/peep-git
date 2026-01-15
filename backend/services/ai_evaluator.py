@@ -73,7 +73,18 @@ class AIEvaluator:
             repo_name = activity.get('repo_name', '未知仓库')
             commit_msg = activity.get('commit_message', '无消息')[:50]
             activity_type = '提交' if activity.get('activity_type') == 'commit' else '推送'
-            activity_summaries.append(f"- {activity_type}: {repo_name} - {commit_msg}")
+            # 添加时间信息
+            timestamp = activity.get('timestamp', '')
+            if timestamp:
+                from datetime import datetime
+                try:
+                    dt = datetime.fromisoformat(timestamp.replace('T', ' ').split('.')[0])
+                    time_str = dt.strftime('%H:%M')
+                    activity_summaries.append(f"- {activity_type}: {repo_name} - {commit_msg} ({time_str})")
+                except:
+                    activity_summaries.append(f"- {activity_type}: {repo_name} - {commit_msg}")
+            else:
+                activity_summaries.append(f"- {activity_type}: {repo_name} - {commit_msg}")
 
         activities_text = '\n'.join(activity_summaries) if activity_summaries else '暂无活动记录'
 
